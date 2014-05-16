@@ -1,0 +1,51 @@
+ ================================================================================================
+
+     OSIT (Open Source Inspect Tool)
+ 
+     Copyright(C) 2010-2014 Samsung Electronics Co., Ltd. All rights reserved.
+   
+ ===============================================================================================
+
+
+1. INTRODUCION
+----------------
+
+  OSIT is an application version of Protex with necessary features to provide convenience.
+  
+  1) Improving speed on displaying and identifying pending files
+  2) Implementing easy GUI 
+
+2. DISTRIBUTED FILES
+---------------------
+
+# Mandatory Directories
+lib - Executable Libraries (Application Core)
+DAT - Component & License knowledge base / Identification data store
+TEMPLATES  - Excel Report Template
+logs - LOG Files 
+
+# Mandatory Files
+
+config.ini  - Configurations for Application
+ldbAIRS.db - database for AIRS(SPDX)
+
+# Optional File
+LICENSE - License Notice for OSIT
+README.txt - ReadMe file for OSIT
+ReleaseNote.txt - Release Note
+
+
+3. What's New
+--------------
+
+### OSI v0.8.0 20140516 (Protex SDK 6.3) ###
+First Contribution
+
+
+4. Contact us
+--------------
+Jaehyun, Yoo	(sjh.yoo@samsung.com)
+Jaeyong, Lee	(jae-yong.lee@samsung.com)
+Suhyun, Kim  	(suhyun47.kim@samsung.com)
+Jae-Yong, Lee	(hankido.lee@samsung.com)
+
