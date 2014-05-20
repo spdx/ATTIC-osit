@@ -247,19 +247,17 @@ public class ProjectAPIWrapper {
 	}
 	
 	private static void updateProjectDescription(String newProjectID) {
-		final String DESCRIPTION = "This project is cloned by OSI - " 
-			+ DateUtil.getCurrentTime("[%1$tY/%1$tm/%1$te(%1$ta) %1$tl:%1$tM:%1$tS %1$tp]");
-		
-		Project project = null;
-		
     	try {
-    		project = ProtexSDKAPIManager.getProjectAPI().getProjectById(newProjectID);
-    		project.setDescription(DESCRIPTION);
-    		ProtexSDKAPIManager.getProjectAPI().updateProject(project);
+    		String DESCRIPTION = "This project is cloned by OSI - " 
+    				+ DateUtil.getCurrentTime("[%1$tY/%1$tm/%1$te(%1$ta) %1$tl:%1$tM:%1$tS %1$tp]");
+    		
+    		ProjectUpdateRequest projectUpdateRequest = new ProjectUpdateRequest();
+    		projectUpdateRequest.setProjectId(newProjectID);
+    		projectUpdateRequest.setDescription(DESCRIPTION);
+    		ProtexSDKAPIManager.getProjectAPI().updateProject(projectUpdateRequest);
 		} catch (SdkFault e) {
 			log.warn(e);
 		}
-		
 	}
 	
 	public static ArrayList<String> getProjectNames() {
