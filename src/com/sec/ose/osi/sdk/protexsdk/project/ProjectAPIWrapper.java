@@ -36,6 +36,7 @@ import com.blackducksoftware.sdk.protex.project.AnalysisSourceRepository;
 import com.blackducksoftware.sdk.protex.project.CloneOption;
 import com.blackducksoftware.sdk.protex.project.Project;
 import com.blackducksoftware.sdk.protex.project.ProjectRequest;
+import com.blackducksoftware.sdk.protex.project.ProjectUpdateRequest;
 import com.blackducksoftware.sdk.protex.project.codetree.discovery.AnalysisInfo;
 import com.sec.ose.osi.data.project.OSIProjectInfo;
 import com.sec.ose.osi.data.project.OSIProjectInfoMgr;
