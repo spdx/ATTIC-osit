@@ -52,7 +52,7 @@ public class JFCExcelFileSaveExplorer {
 		mFileChooser.setAcceptAllFileFilterUsed(false);
 		
 		mFileChooser.setFileFilter(
-				new FileNameExtensionFilter("Exel file", "xls", "XLS")
+				new FileNameExtensionFilter("Exel file", "xlsx", "XLSX")
 				);
 		
 		String strDir = Property.getInstance().getProperty(Property.DEFALT_REPORT_LOCATION);
@@ -83,11 +83,11 @@ public class JFCExcelFileSaveExplorer {
 		int dotIdx = fileName.lastIndexOf('.');
 
 		if(dotIdx < 0) {
-			fileName += ".xls";
+			fileName += ".xlsx";
 		}
 
 		else {
-			fileName = fileName.substring(0, dotIdx)+".xls";
+			fileName = fileName.substring(0, dotIdx)+".xlsx";
 		}
 		
 		File newFile = new File(fileParentPath, fileName);

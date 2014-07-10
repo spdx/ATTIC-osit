@@ -32,7 +32,6 @@ import com.sec.ose.osi.data.project.OSIProjectInfo;
 import com.sec.ose.osi.data.project.ProjectAnalysisInfo;
 import com.sec.ose.osi.sdk.SDKInterfaceImpl;
 import com.sec.ose.osi.sdk.protexsdk.ProtexSDKAPIManager;
-import com.sec.ose.osi.sdk.protexsdk.bom.IdentifiedFileEntFactory;
 import com.sec.ose.osi.sdk.protexsdk.codetree.CodeTreeAPIWrapper;
 import com.sec.ose.osi.sdk.protexsdk.discovery.ProjectDiscoveryControllerMap;
 import com.sec.ose.osi.sdk.protexsdk.project.ProjectAPIWrapper;
@@ -48,7 +47,7 @@ import com.sec.ose.osi.ui.frm.main.manage.ManageMediator;
  * 
  */
 public class AnalyzeExecutionThread extends SwingWorker<String, String> {
-	private static Log log = LogFactory.getLog(IdentifiedFileEntFactory.class);
+	private static Log log = LogFactory.getLog(AnalyzeExecutionThread.class);
 	
 	ManageMediator mediator;
 	

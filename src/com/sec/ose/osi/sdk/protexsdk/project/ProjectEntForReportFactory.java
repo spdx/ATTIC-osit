@@ -53,18 +53,6 @@ public class ProjectEntForReportFactory {
 		return  createProjectEnt(projectName, true, observer);
 	}	
 	
-	public static ProjectEntForReport createProjectEntforAnalysisSummary(String projectName, UIResponseObserver observer) {
-		ProjectEntForReport projectEnt = new ProjectEntForReport();
-		ReportEntity analysisSummary = ReportAPIWrapper.getAnalysisSummary(projectName, observer, true);
-
-		if(analysisSummary == null) {
-			projectEnt.setAnalysisProtexVersion("Unknown");
-		} else {
-			projectEnt.setAnalysisProtexVersion( analysisSummary.getValue(ReportInfo.ANALYSIS_SUMMARY.ANALYZED_RELEASE_DESCRIPTION ));
-		}
-		return projectEnt; 
-	}
-	
 	public static ProjectEntForReport createProjectEnt(
 			String projectName, 
 			boolean countAlreadyIdentifile, 
@@ -76,7 +64,7 @@ public class ProjectEntForReportFactory {
 
 		String projectID = null;	
 		String scanDate = null;
-		String scanDuration = null;
+		long scanTime;
 		String numOfSkippedFiles = null;
 		long bytes;
 		String createdBy = null;
@@ -134,35 +122,29 @@ public class ProjectEntForReportFactory {
 		
 		if(summary != null) {
 			license = summary.getValue(ReportInfo.SUMMARY.LICENSE);
+			if(license != null) projectEnt.setLicense( license );
+
 			description =  summary.getValue(ReportInfo.SUMMARY.DESCRIPTION);
+			if(description != null) projectEnt.setDescription(description);
+
 			server =  summary.getValue(ReportInfo.SUMMARY.SERVER);
+			if( server != null)	projectEnt.setServer(server);
+
 			totalFile = summary.getValue(ReportInfo.SUMMARY.NUMBER_OF_FILES);
+			if(totalFile != null) {
+				totalFileNum = Tools.transStringToInteger(totalFile);
+				projectEnt.setNumOfTotalFiles(totalFileNum);
+			}
+
 			pendingFile = summary.getValue(ReportInfo.SUMMARY.FILES_PENDING_IDENTIFICATION);
+			if(pendingFile != null) {
+				curPendingFileNum = AbstractDiscoveryController.curPendingFileCount(projectName);
+				curPendingRatio = getPendingRatio(pendingFile);
+				projectEnt.setCurrentPendingFileNum(curPendingFileNum);
+				projectEnt.setCurrentPendingRatio(curPendingRatio);
+			}
 		}
 		
-		if(license != null){
-			projectEnt.setLicense( license );
-		}
-
-		if(description != null){
-			projectEnt.setDescription(description);
-		}
-
-		if( server != null){
-			projectEnt.setServer(server);
-		}
-		
-		if(totalFile != null) {
-			totalFileNum = Tools.transStringToInteger(totalFile);
-			projectEnt.setNumOfTotalFiles(totalFileNum);
-		}
-		
-		if(pendingFile != null) {
-			curPendingFileNum = AbstractDiscoveryController.curPendingFileCount(projectName);
-			curPendingRatio = getPendingRatio(pendingFile);
-			projectEnt.setCurrentPendingFileNum(curPendingFileNum);
-			projectEnt.setCurrentPendingRatio(curPendingRatio);
-		}
 		
 		originPendingFileNum = AbstractDiscoveryController.originPendingFileCount(projectName);
 		projectEnt.setOriginPendingFileNum(originPendingFileNum);
@@ -215,17 +197,17 @@ public class ProjectEntForReportFactory {
 				Date finishTime = analysisInfo.getAnalysisFinishedDate();
 
 				if (startTime != null && finishTime != null){
-					scanDuration = getScanDuration(startTime.getTime(), 
-							finishTime.getTime());
-					projectEnt.setScanDuration(scanDuration);
+					scanTime = finishTime.getTime() - startTime.getTime();
+					if(scanTime < 0) scanTime = 0;
+					projectEnt.setScanTime(scanTime);
 				}else
-					projectEnt.setScanDuration("-");
+					projectEnt.setScanTime(0);
 
-				if (analysisInfo.getAnalysisFinishedDate()!= null){		
+				if (finishTime != null){		
 					String dateFormat = "%1$tB %1$te, %1$tY %1$tH:%1$tM %1$Tp";	 
-					scanDate = String.format(dateFormat,analysisInfo.getAnalysisFinishedDate().getTime());
+					scanDate = String.format(dateFormat,finishTime.getTime());
 					projectEnt.setScanDate(scanDate);
-				}else if(analysisInfo.getAnalysisFinishedDate()== null){
+				} else {
 					String msg = "analysis fail"; 
 					projectEnt.setScanDate(msg);
 				}
@@ -244,9 +226,9 @@ public class ProjectEntForReportFactory {
 		String result = "";
 		DecimalFormat df = new DecimalFormat("##0.00%");
 		String percent = df.format((double)originPendingFileNum / (double)totalFileNum );
-		result = "("+percent+")";
+		result = percent;
 		
-		return result;
+		return percent;
 	}
 
 	private static String getPendingRatio(String pendingFilesInfo){
@@ -254,7 +236,7 @@ public class ProjectEntForReportFactory {
 			int pendingFilesIndex1 = pendingFilesInfo.indexOf("(");
 		    int pendingFilesIndex2 = pendingFilesInfo.indexOf(")");
 		    if( (pendingFilesIndex1 >= 0) && (pendingFilesIndex2 >= 0))
-		    return pendingFilesInfo.substring(pendingFilesIndex1+1, pendingFilesIndex2) ;
+		    	return pendingFilesInfo.substring(pendingFilesIndex1+1, pendingFilesIndex2) ;
 		 	 	
 		}
 		
@@ -265,7 +247,7 @@ public class ProjectEntForReportFactory {
 	private static int getNumOfSkippedFiles(String skippedFiles){
 		if(skippedFiles != null){
 		int skippedFilesIndex = skippedFiles.indexOf("Files");  
-		if(skippedFilesIndex >= 0 ){
+		if(skippedFilesIndex > 0 ){
 				String numOfSkippedFiles = skippedFiles.substring(0, skippedFilesIndex-1);
 				numOfSkippedFiles = numOfSkippedFiles.trim();
 				return Tools.transStringToInteger(numOfSkippedFiles) ;
@@ -273,57 +255,6 @@ public class ProjectEntForReportFactory {
 		}
 		
 		return 0;
-	}
-	
-	private static String getScanDuration(long start, long finish)
-	{
-		
-	    String str_sec = "";
-	    String str_min = "";
-	    String str_hur = "";
-	    String str_day = "";
-	    String strRet = "";
-	    
-	    long intervalMilli = finish - start;
-	    
-	    long second = 1000;
-
-	    int result = (int)(intervalMilli/second);
-	    int sec = result%60;
-	    
-	    int result2 = (int)((result-sec)/60) ;
-	    int min = result2%60;
-	    
-	    int result3 = (int)((result2-min)/60);
-	    int hur = result3%24;
-	    
- 	    if( sec>0 && sec<10 )
-	    	str_sec = "0" + String.valueOf(sec);
- 	    else if(sec <= 0)
- 	    	str_sec ="00";
- 	    else
-	    	str_sec = String.valueOf(sec);
-	    
-	    if( min>0 && min<10)
-	    	str_min = "0" + String.valueOf(min);
- 	    else if(min <= 0)
- 	    	str_min ="00";
-	    else
-	    	str_min = String.valueOf(min);
-	    
-	    if(hur >0 && hur<10)
-	    	str_hur = "0" + String.valueOf(hur);
- 	    else if(hur <= 0)
- 	    	str_hur ="00";
-	    else
-	    	str_hur = String.valueOf(hur);
-
-    	strRet = str_day + str_hur + ":" + str_min + ":" + str_sec;
-	   
-	    log.debug(strRet);
-		
-	    return strRet;
-	   
 	}
 	
 }

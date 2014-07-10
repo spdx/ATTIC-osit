@@ -25,7 +25,6 @@ import com.blackducksoftware.sdk.fault.SdkFault;
 import com.blackducksoftware.sdk.protex.project.codetree.PartialCodeTree;
 import com.blackducksoftware.sdk.protex.util.CodeTreeUtilities;
 import com.sec.ose.osi.sdk.protexsdk.ProtexSDKAPIManager;
-import com.sec.ose.osi.sdk.protexsdk.bom.IdentifiedFileEntFactory;
 import com.sec.ose.osi.thread.ui_related.data.message.DefaultUIResponseObserver;
 import com.sec.ose.osi.thread.ui_related.data.message.UIResponseObserver;
 import com.sec.ose.osi.ui.UISDKInterfaceManager;
@@ -36,7 +35,7 @@ import com.sec.ose.osi.ui.UISDKInterfaceManager;
  * 
  */
 public class CodeTreeAPIWrapper {
-	private static Log log = LogFactory.getLog(IdentifiedFileEntFactory.class);
+	private static Log log = LogFactory.getLog(CodeTreeAPIWrapper.class);
 	
 	private static HashMap<String,PartialCodeTree> codeTreeMap = new HashMap<String,PartialCodeTree>();
 

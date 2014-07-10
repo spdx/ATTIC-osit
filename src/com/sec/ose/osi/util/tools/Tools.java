@@ -18,6 +18,10 @@ package com.sec.ose.osi.util.tools;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,5 +58,19 @@ public class Tools {
 		returnStackTraceString = out.toString();
 		return returnStackTraceString;
 	 }
+
+	public static ArrayList<String> sortByValue(final HashMap<String,Integer> map){ 
+		ArrayList<String> key = new ArrayList<String>();
+		key.addAll(map.keySet());
+		Collections.sort(key, new Comparator<Object>(){
+			public int compare(Object o1,Object o2){
+				Integer v1 = map.get(o1);
+				Integer v2 = map.get(o2);
+				return v1.compareTo(v2);
+				}
+			});
+		Collections.reverse(key);
+		return key;
+	}
 
 }

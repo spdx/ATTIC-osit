@@ -17,10 +17,9 @@
 package com.sec.ose.osi.sdk;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import com.sec.ose.osi.data.project.OSIProjectInfo;
-import com.sec.ose.osi.report.common.ProjectInfoForIdentifyReport;
+import com.sec.ose.osi.report.standard.data.ProjectInfoForIdentifyReport;
 import com.sec.ose.osi.thread.ui_related.data.message.UIResponseObserver;
 
 /**
@@ -48,7 +47,7 @@ public interface SDKInterface {
 	 * @param oberver
 	 */
 	public void generateIdentifyReport(
-			Collection<ProjectInfoForIdentifyReport> projectInfo,  
+			ArrayList<ProjectInfoForIdentifyReport> projectInfo,  
 	    	String sourceExcelFilename,
 	    	String targeExcelFilename,
 	    	boolean insertCodeMatches,

@@ -17,7 +17,6 @@
 package com.sec.ose.osi.sdk;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -27,14 +26,12 @@ import org.apache.commons.logging.LogFactory;
 import com.blackducksoftware.sdk.protex.report.SpdxReportConfiguration;
 import com.sec.ose.osi.data.LoginSessionEnt;
 import com.sec.ose.osi.data.project.OSIProjectInfo;
-import com.sec.ose.osi.report.common.IdentifyReportGenerator;
-import com.sec.ose.osi.report.common.ProjectInfoForIdentifyReport;
-import com.sec.ose.osi.report.standard.StandardIdentifyReportGenerator;
+import com.sec.ose.osi.report.ReportGenerator;
+import com.sec.ose.osi.report.standard.data.ProjectInfoForIdentifyReport;
 import com.sec.ose.osi.sdk.protexsdk.ProtexSDKAPIManager;
 import com.sec.ose.osi.sdk.protexsdk.authentication.AuthenticationAPIWrapper;
 import com.sec.ose.osi.sdk.protexsdk.bom.BOMEnt;
 import com.sec.ose.osi.sdk.protexsdk.bom.BOMReportAPIWrapper;
-import com.sec.ose.osi.sdk.protexsdk.bom.IdentifiedFileEntFactory;
 import com.sec.ose.osi.sdk.protexsdk.discovery.ReportAPIWrapper;
 import com.sec.ose.osi.sdk.protexsdk.project.ProjectAPIWrapper;
 import com.sec.ose.osi.thread.ui_related.data.message.DefaultUIResponseObserver;
@@ -46,7 +43,7 @@ import com.sec.ose.osi.thread.ui_related.data.message.UIResponseObserver;
  * 
  */
 public class SDKInterfaceImpl implements SDKInterface{
-	private static Log log = LogFactory.getLog(IdentifiedFileEntFactory.class);
+	private static Log log = LogFactory.getLog(SDKInterfaceImpl.class);
 	
 	private volatile static SDKInterfaceImpl instance = null;
 	public static SDKInterfaceImpl getInstance() {
@@ -88,7 +85,7 @@ public class SDKInterfaceImpl implements SDKInterface{
     }
     
     public void generateIdentifyReport( 
-    		Collection<ProjectInfoForIdentifyReport> projectsInfo, 
+    		ArrayList<ProjectInfoForIdentifyReport> projectsInfo, 
     		String sourceExcelFilename,
 	    	String targeExcelFilename,
 	    	boolean insertCodeMatches,
@@ -97,24 +94,16 @@ public class SDKInterfaceImpl implements SDKInterface{
 			String organizationName,
 	    	UIResponseObserver observer)  {   	
     	
-    	IdentifyReportGenerator xIdentifyReportGenerator = new StandardIdentifyReportGenerator();
+    	ReportGenerator rg = new ReportGenerator();
     	
-    	log.debug("Selected ReportGenerator: "+xIdentifyReportGenerator.getClass().getName());    	
-    	// 2. try to generate identify report
-    	if(xIdentifyReportGenerator != null) {
-			xIdentifyReportGenerator.generateIdentifyReport(
+    	rg.generateIdentifyReport(
 					projectsInfo, 
 					sourceExcelFilename, 
 					targeExcelFilename, 
-					insertCodeMatches,
 					creatorName,
 					creatorEmail,
 					organizationName,
 					observer );
-    	} else {
-    		observer.setFailMessage("report template is not supported");
-    	}
-    	 
      }
 
     public void generateSPDXReport(ArrayList<String> projectNameList, ArrayList<String> targetFilePathList, SpdxReportConfiguration configuration, UIResponseObserver observer) {

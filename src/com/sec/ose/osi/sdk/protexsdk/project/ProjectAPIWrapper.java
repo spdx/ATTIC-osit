@@ -259,6 +259,7 @@ public class ProjectAPIWrapper {
 		} catch (SdkFault e) {
 			log.warn(e);
 		}
+		
 	}
 	
 	public static ArrayList<String> getProjectNames() {

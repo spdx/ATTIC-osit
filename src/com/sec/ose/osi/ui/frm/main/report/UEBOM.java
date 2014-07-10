@@ -34,10 +34,10 @@ public class UEBOM implements UIEntity {
 	private HashMap<String, BOMTableModel> bomTableModels = null;
 	private boolean optAllFileListUpSelected;
 
-	private String srcFileName = null;
+	private String srcFileName = null;			// Deprecated : for overwrite Excel
 	private String targetFileName = null;
-	private boolean insertCodeMatch = false;
-	private boolean bOverwrite = false;
+	private boolean insertCodeMatch = false;	// Identified Files Sheet
+	private boolean bOverwrite = false;			// Deprecated
 	
 	private String creatorName = null;
 	private String creatorEmail = null;

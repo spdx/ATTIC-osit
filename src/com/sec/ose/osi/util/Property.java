@@ -123,12 +123,12 @@ public class Property {
 	// key: web keyword in Protex Server
 	// value: string to be replaced.
 	static {
-		HTML_RESERVED_CHAR_REPLACE_MAP.put("&#10", "\n");
-		HTML_RESERVED_CHAR_REPLACE_MAP.put("&lt", "<");
-		HTML_RESERVED_CHAR_REPLACE_MAP.put("&gt", ">");
-		HTML_RESERVED_CHAR_REPLACE_MAP.put("&quot", "\"");
-		HTML_RESERVED_CHAR_REPLACE_MAP.put("&apos", "'");
-		HTML_RESERVED_CHAR_REPLACE_MAP.put("&amp", "&");
+		HTML_RESERVED_CHAR_REPLACE_MAP.put("&#10;", "\n");
+		HTML_RESERVED_CHAR_REPLACE_MAP.put("&lt;", "<");
+		HTML_RESERVED_CHAR_REPLACE_MAP.put("&gt;", ">");
+		HTML_RESERVED_CHAR_REPLACE_MAP.put("&quot;", "\"");
+		HTML_RESERVED_CHAR_REPLACE_MAP.put("&apos;", "'");
+		HTML_RESERVED_CHAR_REPLACE_MAP.put("&amp;", "&");
 	}
 	
 	private volatile static Property instance = null;

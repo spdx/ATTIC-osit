@@ -25,7 +25,7 @@ public class Version {
 
 	private static final String APPLICATION_NAME_NICE = "OSIT";
 	private static final String APPLICATION_NAME = "Open Source Inspect Tool";
-	private static final String APPLICATION_VERSION = "0.8.0";
+	private static final String APPLICATION_VERSION = "0.8.1";
 	
 	private static final String PROTEX_VERSION_NUM = "6.3";
 	private static final String PROTEX_VERSION = "Protex SDK " + PROTEX_VERSION_NUM;

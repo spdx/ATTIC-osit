@@ -16,18 +16,33 @@
 */
 package com.sec.ose.osi.sdk.protexsdk.project;
 
+import java.util.Date;
+
 /**
  * ProjectEntForReport
  * @author suhyun47.kim,hankido.lee, 
  * 
  */
 public class ProjectEntForReport {
+//
+//	private String classification;
+//	private Date scanDate;
+//	private Date scanTime;	// scan duration
+//	private int pendingFileCount;
+//	private double pendingPercent;
+//	private int totalFileCount;
+//	private int exceptionalFileCount;
+//	private long bytes;
+//	private int totalIdentifiedFileCount;
+//	private int currentPendingFileCount;
+//	
+//	
 	
 	private String projectID;
 	private String projectName;
 	
 	private String scanDate;
-	private String scanDuration;
+	private long scanTime;
 	private int    originPendingFileNum;
 	private int    currentPendingFileNum;
 	private String originPendingRatio;
@@ -108,12 +123,12 @@ public class ProjectEntForReport {
 		this.scanDate = scanDate;
 	}
 
-	public String getScanDuration() {
-		return scanDuration;
+	public long getScanTime() {
+		return scanTime;
 	}
 
-	public void setScanDuration(String scanDuration) {
-		this.scanDuration = scanDuration;
+	public void setScanTime(long scanDuration) {
+		this.scanTime = scanDuration;
 	}
 
 	public int getCurrentPendingFileNum() {

@@ -33,7 +33,7 @@ import com.sec.ose.airs.domain.autoidentify.AutoIdentifyResult;
 import com.sec.ose.osi.data.project.OSIProjectInfo;
 import com.sec.ose.osi.data.project.OSIProjectInfoMgr;
 import com.sec.ose.osi.localdb.identification.IdentificationDBManager;
-import com.sec.ose.osi.report.common.ProjectInfoForIdentifyReport;
+import com.sec.ose.osi.report.standard.data.ProjectInfoForIdentifyReport;
 import com.sec.ose.osi.sdk.SDKInterfaceImpl;
 import com.sec.ose.osi.sdk.protexsdk.codetree.CodeTreeAPIWrapper;
 import com.sec.ose.osi.sdk.protexsdk.component.ComponentAPIWrapper;

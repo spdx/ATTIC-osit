@@ -54,13 +54,13 @@ import com.blackducksoftware.sdk.protex.report.SpdxPackageLicenseConclusionType;
 import com.blackducksoftware.sdk.protex.report.SpdxReportConfiguration;
 import com.blackducksoftware.sdk.protex.user.User;
 import com.sec.ose.osi.data.LoginSessionEnt;
-import com.sec.ose.osi.report.standard.StandardReportExcelFileManager;
 import com.sec.ose.osi.sdk.protexsdk.ProtexSDKAPIManager;
 import com.sec.ose.osi.thread.ui_related.UserRequestHandler;
 import com.sec.ose.osi.thread.ui_related.data.message.UIResponseObserver;
 import com.sec.ose.osi.ui.UISharedData;
 import com.sec.ose.osi.ui.frm.main.report.file_explorer.JFCFolderExplorer;
 import com.sec.ose.osi.util.Property;
+import com.sec.ose.osi.util.tools.FormatUtil;
 
 /**
  * JPanExportReport
@@ -80,6 +80,14 @@ public class JPanExportReport extends JPanel{
 	private JPanel jButtonPanel = null;	
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
+
+	private final int CREATOR_NAME = 0;
+	private final int CREATOR_EMAIL = 1;
+	private final int ORGANIZATION_NAME = 2;
+	private final int FIELD_COUNT = 3;
+	
+	private JLabel [] jLabelList = new JLabel[FIELD_COUNT];
+	private boolean mandatoryField[] = new boolean[FIELD_COUNT]; 
 	
 	public JPanExportReport() {
 		initialize();
@@ -234,7 +242,7 @@ public class JPanExportReport extends JPanel{
 			);
 
 			JLabel jLabelIdentify = new JLabel();
-			jLabelIdentify.setText("Generate Identify Report (*.xls)");
+			jLabelIdentify.setText("Generate Identify Report (*.xlsx)");
 			jLabelIdentify.addMouseListener(
 					new MouseAdapter() {
 						public void mouseClicked(MouseEvent e) {
@@ -542,24 +550,24 @@ public class JPanExportReport extends JPanel{
 			jPanelCreatorInfo = new JPanel();
 			jPanelCreatorInfo.setLayout(new GridBagLayout());
 
-			JLabel jLabelCreatorName = new JLabel("* Creator Name:",JLabel.RIGHT);
-			jLabelCreatorName.setForeground(new Color(255,0,0));
-			JLabel jLabelCreatorEmail = new JLabel("* Creator Email:",JLabel.RIGHT);
-			jLabelCreatorEmail.setForeground(new Color(255,0,0));
-			JLabel jLabelOrganizationName = new JLabel("* Organization Name:",JLabel.RIGHT);
-			jLabelOrganizationName.setForeground(new Color(255,0,0));
+			jLabelList[CREATOR_NAME] = new JLabel("* Creator Name:",JLabel.RIGHT);
+			mandatoryField[CREATOR_NAME] = true;
+			jLabelList[CREATOR_EMAIL] = new JLabel("* Creator Email:",JLabel.RIGHT);
+			mandatoryField[CREATOR_EMAIL] = true;
+			jLabelList[ORGANIZATION_NAME] = new JLabel("* Organization Name:",JLabel.RIGHT);
+			mandatoryField[ORGANIZATION_NAME] = true;
 			
 			// Creator Name
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridy = 0;
+			gridBagConstraints.gridy = CREATOR_NAME;
 			gridBagConstraints.gridx = 0;
 			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints.insets = new Insets(0, 5, 0, 0);
-			jPanelCreatorInfo.add(jLabelCreatorName, gridBagConstraints);
+			jPanelCreatorInfo.add(jLabelList[CREATOR_NAME], gridBagConstraints);
 
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.fill = GridBagConstraints.BOTH;
-			gridBagConstraints1.gridy = 0;
+			gridBagConstraints1.gridy = CREATOR_NAME;
 			gridBagConstraints1.gridx = 1;
 			gridBagConstraints1.weightx = 1.0;
 			gridBagConstraints1.insets = new Insets(0, 5, 0, 5);
@@ -567,15 +575,15 @@ public class JPanExportReport extends JPanel{
 			
 			// Creator Email
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridy = 1;
+			gridBagConstraints2.gridy = CREATOR_EMAIL;
 			gridBagConstraints2.gridx = 0;
 			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints2.insets = new Insets(0, 5, 0, 0);
-			jPanelCreatorInfo.add(jLabelCreatorEmail, gridBagConstraints2);
+			jPanelCreatorInfo.add(jLabelList[CREATOR_EMAIL], gridBagConstraints2);
 			
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.fill = GridBagConstraints.BOTH;
-			gridBagConstraints3.gridy = 1;
+			gridBagConstraints3.gridy = CREATOR_EMAIL;
 			gridBagConstraints3.gridx = 1;
 			gridBagConstraints3.weightx = 1.0;
 			gridBagConstraints3.insets = new Insets(5, 5, 0, 5);
@@ -583,15 +591,15 @@ public class JPanExportReport extends JPanel{
 
 			// Organization Name
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.gridy = 2;
+			gridBagConstraints4.gridy = ORGANIZATION_NAME;
 			gridBagConstraints4.gridx = 0;
 			gridBagConstraints4.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints4.insets = new Insets(0, 5, 0, 0);
-			jPanelCreatorInfo.add(jLabelOrganizationName, gridBagConstraints4);
+			jPanelCreatorInfo.add(jLabelList[ORGANIZATION_NAME], gridBagConstraints4);
 
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.fill = GridBagConstraints.BOTH;
-			gridBagConstraints5.gridy = 2;
+			gridBagConstraints5.gridy = ORGANIZATION_NAME;
 			gridBagConstraints5.gridx = 1;
 			gridBagConstraints5.weightx = 1.0;
 			gridBagConstraints5.insets = new Insets(5, 5, 0, 5);
@@ -663,9 +671,14 @@ public class JPanExportReport extends JPanel{
 					break;
 					
 				case CHECK_BLANK:
-					if(getJTextFieldCreatorName().getText().length() == 0 ||
-						getJTextFieldCreatorEmail().getText().length() == 0 ||
-						getJTextFieldOrganizationName().getText().length() == 0
+					for(int i=0;i<mandatoryField.length;i++) {
+						if(mandatoryField[i]) jLabelList[i].setForeground(new Color(255,0,0));
+						else  jLabelList[i].setForeground(new Color(0,0,0));
+					}
+					
+					if((mandatoryField[CREATOR_NAME] && getJTextFieldCreatorName().getText().length() == 0) ||
+						(mandatoryField[CREATOR_EMAIL] && getJTextFieldCreatorEmail().getText().length() == 0) ||
+						(mandatoryField[ORGANIZATION_NAME] && getJTextFieldOrganizationName().getText().length() == 0)
 					   ) {
 						getJButtonOK().setEnabled(false);
 					} else {
@@ -675,14 +688,20 @@ public class JPanExportReport extends JPanel{
 
 				case BTN_BOTH_REPORT:
 					selectedBothReport();
+					mandatoryField[ORGANIZATION_NAME] = true;
+					handle(CHECK_BLANK);
 					break;
 					
 				case BTN_IDENTIFY_REPORT:
 					selectedIdentifyReport();
+					mandatoryField[ORGANIZATION_NAME] = false;
+					handle(CHECK_BLANK);
 					break;
 
 				case BTN_SPDX_REPORT:
 					selectedSPDXReport();
+					mandatoryField[ORGANIZATION_NAME] = true;
+					handle(CHECK_BLANK);
 					break;
 			}
 		}
@@ -694,7 +713,7 @@ public class JPanExportReport extends JPanel{
 			}
 			String prevReportedFilePath = reportedFilePath;
 			String projectName = ReportMediator.getInstance().getFirstSelectedProjectName();
-			reportedFilePath += StandardReportExcelFileManager.getReportFileNameFromProjectName(projectName);
+			reportedFilePath += getReportFileNameFromProjectName(projectName);
 			
 			// check if target file name is empty
 			if( (reportedFilePath == null) || (reportedFilePath.length() == 0) ) {
@@ -724,7 +743,7 @@ public class JPanExportReport extends JPanel{
 
 			ArrayList<String> reportFilePathList = new ArrayList<String>(1);
 			for(String tmpProjectName:ReportMediator.getInstance().getSelectedProjectList()) {
-				String tmpFileName = StandardReportExcelFileManager.getSPDXDocumentFileNameFromProjectName(tmpProjectName);
+				String tmpFileName = getSPDXDocumentFileNameFromProjectName(tmpProjectName);
 				reportFilePathList.add(prevReportedFilePath + tmpFileName);
 		        spdxReportConfiguration.setPackageName(tmpProjectName);	// packages.name
 		        // <name>testPackageName</name>
@@ -769,7 +788,7 @@ public class JPanExportReport extends JPanel{
 				reportedFilePath += File.separator;
 			}
 			String projectName = ReportMediator.getInstance().getFirstSelectedProjectName();
-			reportedFilePath += StandardReportExcelFileManager.getReportFileNameFromProjectName(projectName);
+			reportedFilePath += getReportFileNameFromProjectName(projectName);
 			
 			// check if target file name is empty
 			if( (reportedFilePath == null) || (reportedFilePath.length() == 0) ) {
@@ -850,7 +869,7 @@ public class JPanExportReport extends JPanel{
 
 			ArrayList<String> reportFilePathList = new ArrayList<String>(1);
 			for(String tmpProjectName:ReportMediator.getInstance().getSelectedProjectList()) {
-				String tmpFileName = StandardReportExcelFileManager.getSPDXDocumentFileNameFromProjectName(tmpProjectName);
+				String tmpFileName = getSPDXDocumentFileNameFromProjectName(tmpProjectName);
 				reportFilePathList.add(prevReportedFilePath + tmpFileName);
 		        spdxReportConfiguration.setPackageName(tmpProjectName);	// packages.name
 		        // <name>testPackageName</name>
@@ -887,6 +906,35 @@ public class JPanExportReport extends JPanel{
 					"Export SPDX Document",
 					msgType
 			);
+		}
+		
+
+		private String getReportFileNameFromProjectName(String protexProjectName) {
+			
+
+			
+			String reportFileName = protexProjectName
+									+ "_"
+									+ FormatUtil.getTimeIdentifier()
+									+ ".xlsx"
+									;
+
+			reportFileName = reportFileName.replace(" ", "_");
+			return reportFileName;
+		}
+
+		private String getSPDXDocumentFileNameFromProjectName(String protexProjectName) {
+			
+
+			
+			String reportFileName = protexProjectName
+									+ "_"
+									+ FormatUtil.getTimeIdentifier()
+									+ ".rdf"
+									;
+
+			reportFileName = reportFileName.replace(" ", "_");
+			return reportFileName;
 		}
 
 		private SpdxReportConfiguration getSPDXReportConfiguration(SpdxReportConfiguration src) {

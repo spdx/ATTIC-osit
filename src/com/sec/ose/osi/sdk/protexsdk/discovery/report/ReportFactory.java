@@ -156,6 +156,7 @@ public class ReportFactory {
 		return htmlReportReader;
 	}
 
+	/*
 	public static BufferedReader generateReportFromExcel(String pProjectName, ReportTemplateRequest request, UIResponseObserver observer) {
 		Report report = null;
 		try {
@@ -212,6 +213,7 @@ public class ReportFactory {
 		report = null;
 		return XmlReportReader;
 	}
+	*/
 	
 	public static ReportTemplateRequest createReportTemplateRequest(String label,ReportSectionType rsType) {
 		ReportTemplateRequest reportTemplate = new ReportTemplateRequest();

@@ -33,7 +33,7 @@ public class DateUtil {
 
 	public static String translateTimeFormatToColon(long sourceTime) {
 		final int[] TIME_UNIT = {24*60*60*1000, 60*60*1000, 60*1000, 1000};
-		final String[] TIME_UNIT_NAME = {"day ", ": ", ": ", ""};
+		final String[] TIME_UNIT_NAME = {"day ", ":", ":", ""};
 		
 		long targetTime = sourceTime;
 		StringBuffer result = new StringBuffer();
@@ -44,12 +44,9 @@ public class DateUtil {
 			if(i==0 && tmpTime==0) {
 				continue;
 			}
-			String time = "";
-			if(i>0 && tmpTime >= 0 && tmpTime <= 9) {
-				time = "0" + String.valueOf(tmpTime);
-			} else {
-				time = String.valueOf(tmpTime);
-			}
+			
+			String time = String.format("%02d", tmpTime);
+			if(i==0) time = String.valueOf(tmpTime);
 			result.append(time).append(TIME_UNIT_NAME[i]);
 
 			targetTime %= TIME_UNIT[i];
