@@ -1531,6 +1531,7 @@ public class IdentificationDBManager {
 				String key = identifiedFile.getPath()+"-"+identifiedFile.getMatchedFile();
 				identifiedFileMap.put(key, identifiedFile);
 			}
+			rs1.close();
 			
 			String sqlForCodeMatch = TableCodeMatch.getQueryForCodeMatchlistByFolder(projectName, pPath);
 

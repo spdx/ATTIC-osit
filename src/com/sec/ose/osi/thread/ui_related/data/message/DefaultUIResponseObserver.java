@@ -105,10 +105,8 @@ public class DefaultUIResponseObserver implements UIResponseObserver {
 			return msg.toString();
 		}
 		
-		int cnt=0;
 		while(itr.hasNext()) {
 			msg.append((itr.next()+";"));
-			cnt++;
 		}
 
 		if(msg.length() > 2)

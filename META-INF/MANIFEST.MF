@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 Main-Class: com.sec.ose.osi.UIMain
 Class-Path: . 
- lib/airs/airs.jar 
  lib/airs/jcommander-1.30.jar 
  lib/dbconnector/mybatis-3.1.1.jar 
  lib/dbconnector/sqlite-jdbc-3.7.2.jar 

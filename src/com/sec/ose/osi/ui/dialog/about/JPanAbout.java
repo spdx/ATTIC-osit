@@ -79,9 +79,10 @@ public class JPanAbout extends JPanel {
 	public static String getLicenseText(){
 		StringBuffer opensourceAnnouncement = new StringBuffer(Version.getApplicationVersionInfo() + "\n");
 		FileReader fReader = null;
+		BufferedReader bReader = null;
 		try {
 			fReader = new FileReader(new File(LICENSE_FILE));
-			BufferedReader bReader = new BufferedReader(fReader);
+			bReader = new BufferedReader(fReader);
 
 			String tempOpensourceAnnouncement = null;
 			while((tempOpensourceAnnouncement=bReader.readLine())!= null){
@@ -99,6 +100,15 @@ public class JPanAbout extends JPanel {
 					log.warn(e);
 				} finally {
 					fReader = null;
+				}
+			}
+			if(bReader != null) {
+				try {
+					bReader.close();
+				} catch (IOException e) {
+					log.warn(e);
+				} finally {
+					bReader = null;
 				}
 			}
 		}

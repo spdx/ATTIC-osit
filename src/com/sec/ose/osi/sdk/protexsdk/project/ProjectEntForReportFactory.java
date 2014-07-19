@@ -222,13 +222,9 @@ public class ProjectEntForReportFactory {
 	}
 	
 	private static String calculateOriginPendingRatio(int totalFileNum, int originPendingFileNum) {
-		
-		String result = "";
+
 		DecimalFormat df = new DecimalFormat("##0.00%");
-		String percent = df.format((double)originPendingFileNum / (double)totalFileNum );
-		result = percent;
-		
-		return percent;
+		return df.format((double)originPendingFileNum / (double)totalFileNum );
 	}
 
 	private static String getPendingRatio(String pendingFilesInfo){

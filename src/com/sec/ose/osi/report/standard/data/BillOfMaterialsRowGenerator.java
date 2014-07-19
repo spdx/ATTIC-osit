@@ -146,16 +146,22 @@ public class BillOfMaterialsRowGenerator {
 		
 		HashMap<String, ArrayList<IdentifiedFilesRow>> fileEntMap = toComponentFileEntHashMap(IdentifiedFilesRowList);
 		
+		ArrayList<String> keyListForDup = new ArrayList<String>();
 		for(int i=0; i<boms.size(); i++) {
 			BOMEnt curBOM = boms.get(i);
-			log.debug(projectName+"'s BoM info " + " ("+i+"/"+boms.size()+") : "+curBOM.getComponentName());
 
+			// 0. gen key (component name + license name)
 			String componentName = curBOM.getComponentName().trim();
+			log.debug(projectName+"'s BoM info " + " ("+i+"/"+boms.size()+") : "+componentName);
 			if(componentName.equals(projectName)) continue;
+			
+			String componentLicense = curBOM.getLicense().trim();
+			String key = componentName + "#" + componentLicense;
+			if(keyListForDup.contains(key)) continue;
+			else keyListForDup.add(key);
 			
 			// 1. extract component info
 			String componentVersion = curBOM.getComponentVersion(); 
-			String componentLicense = curBOM.getLicense();
 			String componentComment = curBOM.getComment();
 
 			String matchedFiles = "";
@@ -178,8 +184,8 @@ public class BillOfMaterialsRowGenerator {
 			
 			//	 2. extract file info - component
 			log.debug("- get FileInfo start");
-			if(fileEntMap.containsKey(componentName) == true) {
-				ArrayList<IdentifiedFilesRow> fileEntList = fileEntMap.get(componentName); 
+			if(fileEntMap.containsKey(key) == true) {
+				ArrayList<IdentifiedFilesRow> fileEntList = fileEntMap.get(key); 
 				log.debug("- File # : "+fileEntList.size());
 				ArrayList<String> categorySet = getCategorySet(fileEntList);
 				
@@ -381,7 +387,7 @@ public class BillOfMaterialsRowGenerator {
 	}
 
 	/**
-	 * key : component name
+	 * key : component name + license name
 	 * value : identified file list
 	 * 
 	 * @param fileEntList
@@ -397,13 +403,16 @@ public class BillOfMaterialsRowGenerator {
 		
 		for(IdentifiedFilesRow ent:fileEntList) {			
 			String componentName = ent.getComponent();
+			String licenseName = ent.getLicense();
 			if(componentName != null) componentName = componentName.trim();
+			if(licenseName != null) licenseName = licenseName.trim();
+			String key = componentName+"#"+licenseName;
 			
-			if(hashMap.containsKey(componentName) == false) {
+			if(hashMap.containsKey(key) == false) {
 				ArrayList<IdentifiedFilesRow> fileEntSet = new ArrayList<IdentifiedFilesRow>();
-				hashMap.put(componentName, fileEntSet);
+				hashMap.put(key, fileEntSet);
 			}
-			hashMap.get(componentName).add(ent);
+			hashMap.get(key).add(ent);
 			
 		}
 		

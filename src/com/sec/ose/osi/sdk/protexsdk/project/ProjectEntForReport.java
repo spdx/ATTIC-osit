@@ -16,7 +16,6 @@
 */
 package com.sec.ose.osi.sdk.protexsdk.project;
 
-import java.util.Date;
 
 /**
  * ProjectEntForReport

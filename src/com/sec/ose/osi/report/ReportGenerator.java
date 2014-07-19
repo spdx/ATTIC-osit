@@ -16,9 +16,7 @@
 */
 package com.sec.ose.osi.report;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -30,6 +28,7 @@ import com.sec.ose.osi.report.standard.data.IdentifiedFilesRow;
 import com.sec.ose.osi.report.standard.data.LicenseSummaryRow;
 import com.sec.ose.osi.report.standard.data.ProjectInfoForIdentifyReport;
 import com.sec.ose.osi.report.standard.data.SummaryRowGenerator;
+import com.sec.ose.osi.thread.ui_related.data.message.DefaultUIResponseObserver;
 import com.sec.ose.osi.thread.ui_related.data.message.UIResponseObserver;
 
 /**
@@ -53,6 +52,8 @@ public class ReportGenerator {
 			String sourceExcelFilename, String targeExcelFilename,
 			String creatorName, String creatorEmail, String organizationName,
 			UIResponseObserver observer) {
+
+	   	 if(observer == null) observer = new DefaultUIResponseObserver();
 		
 		SheetsManager reportSheetManager = new SheetsManager();
 		
@@ -64,6 +65,7 @@ public class ReportGenerator {
 		XSSFWorkbook wb = reportSheetManager.createWorkbook();
 		try {
 			
+			observer.setMessageHeader("Creating report cover \n");
 			// 1. create cover sheet
 			reportSheetManager.createCoverSheet(ProjectName, creatorName, creatorEmail, organizationName);
 			
@@ -91,9 +93,9 @@ public class ReportGenerator {
 		    FileOutputStream fileOut = new FileOutputStream(targeExcelFilename);
 		    wb.write(fileOut);
 		    fileOut.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		    observer.setSuccessMessage("\""+targeExcelFilename+"\" has been created successfully.\n");
+		} catch (Exception e) {
+			observer.setFailMessage("Can not create report. \n");
 			e.printStackTrace();
 		}
 	}

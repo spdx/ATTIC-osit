@@ -38,6 +38,9 @@ ReleaseNote.txt - Release Note
 3. What's New
 --------------
 
+### OSI v0.8.2 20140719 (Protex SDK 6.3) ###
+Patch AIRS v0.8 (http://git.spdx.org/airs.git/)
+
 ### OSI v0.8.1 20140711 (Protex SDK 6.3) ###
 Improvement the report function 
 - remove "TEMPLATES" directory
