@@ -26,8 +26,6 @@ import com.sec.ose.osi.ui.cache.UIEntity;
 public class UELogin implements UIEntity {
 	private static final long serialVersionUID = 1L;
 	
-	private boolean rememberID = false;
-	
 	private String mUserID = "";
 	private transient String mPassword = "";
 	private String mProtexServerIP = "";
@@ -35,11 +33,9 @@ public class UELogin implements UIEntity {
 	protected UELogin( 
 			String userUD, 
 			String password, 
-			String protexServerIP,
-			boolean rememberID) {
+			String protexServerIP) {
 		
 		super();
-		this.rememberID = rememberID;
 		this.mUserID = userUD;
 		this.mPassword = password;
 		this.mProtexServerIP = protexServerIP;
@@ -51,10 +47,6 @@ public class UELogin implements UIEntity {
 
 	public String getPassword() {
 		return mPassword;
-	}
-	
-	public boolean isRememberIDOnly() {
-		return rememberID;
 	}
 	
 	public String getProtexServerIP() {

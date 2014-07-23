@@ -61,9 +61,9 @@ public class Property {
 								// file extensions which will be 
 	public static final String ANALYSIS_EXCLUDE_FOLDER_NAME = "Analysis_Exclude_Folder_Name";
 
-	public static final String PROXY_SERVER_IP = "Proxy_Server_IP";
-	public static final String PROXY_SERVER_PORT = "Proxy_Server_Port";
-	public static final String PROXY_USED_BY_SERVER = "Proxy_UsedBy_Server";
+	public static final String PROXY_HOST = "Proxy_Host";
+	public static final String PROXY_PORT = "Proxy_Port";
+	public static final String PROXY_BYPASS = "Proxy_Bypass";
 	
 	public static final String LOGGING_IDENTIFY_TRANSACTIONS = "Logging_Identify_Transactions";  // "true" will work
 	

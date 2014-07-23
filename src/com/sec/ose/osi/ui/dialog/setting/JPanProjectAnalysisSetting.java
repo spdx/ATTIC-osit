@@ -77,7 +77,7 @@ public class JPanProjectAnalysisSetting extends JPanel {
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
 	private Component mParent = null;
-	private JPanManageMain analPanel = null; 
+	private JPanManageMain analysisPanel = null; 
 
 	private JPanel jInnerPanel = null;
 	private JComboBox<String> jComboBoxTimeCycle = null;
@@ -101,8 +101,8 @@ public class JPanProjectAnalysisSetting extends JPanel {
 	}
 
 	public void setJPanManageMain(JPanManageMain p){   
-		analPanel = p;
-		load(analPanel.getUIEntityMonitoringInterval());
+		analysisPanel = p;
+		load(analysisPanel.getUIEntityMonitoringInterval());
 	}
 
 	public void setParent(Component pParent) {
@@ -645,7 +645,7 @@ public class JPanProjectAnalysisSetting extends JPanel {
 			ueProjectAnalysis.setSelectedType(selectedType);
 			ueProjectAnalysis.setMonitorInterval(interval);
 			ueProjectAnalysis.setProjectSplitFileCountLimit(projectSplitFileNum);
-			analPanel.setProjectAnalysisSetting(ueProjectAnalysis);
+			analysisPanel.setProjectAnalysisSetting(ueProjectAnalysis);
 			
 			mParent.setVisible(false);
 		}

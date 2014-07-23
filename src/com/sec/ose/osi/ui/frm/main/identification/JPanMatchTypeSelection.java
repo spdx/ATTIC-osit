@@ -68,13 +68,13 @@ public class JPanMatchTypeSelection extends JPanel {
 		gridBagConstraints12.ipadx = 5;
 		gridBagConstraints12.gridy = 0;
 		jLabelArrow2 = new JLabel();
-		jLabelArrow2.setText("¡æ");
+		jLabelArrow2.setText("â†’");
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.gridx = 1;
 		gridBagConstraints11.ipadx = 5;
 		gridBagConstraints11.gridy = 0;
 		jLabelArrow1 = new JLabel();
-		jLabelArrow1.setText("¡æ");
+		jLabelArrow1.setText("â†’");
 		GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 		gridBagConstraints8.ipadx = 10;
 		gridBagConstraints8.insets = new Insets(10, 0, 10, 10);

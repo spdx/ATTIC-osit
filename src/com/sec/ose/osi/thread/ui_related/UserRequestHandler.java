@@ -46,13 +46,10 @@ public class UserRequestHandler {
 	public static final int GET_ALL_PROJECT_NAMES 		= 21;
 	public static final int SPDX_AUTO_IDENTIFY = 22;
 	
-	
-	public static final int SAVE_REPORT_SETTING 		= 101;
 	public static final int LOGIN 						= 102;
 	public static final int GENERATE_BOTH_REPORT		= 103;
 	public static final int GENERATE_IDENTIFY_REPORT 	= 104;
 	public static final int GENERATE_SPDX_REPORT		= 105;
-	public static final int SAVE_PROXY_SETTING 			= 107;
 	
 	
 	public static final int EXPORT_ALL_BOM_LIST 		= 501;
@@ -92,7 +89,6 @@ public class UserRequestHandler {
 		COMMAND_NAME.put(SYNC_TO_SERVER, "SYNC_TO_SERVER");
 		COMMAND_NAME.put(GET_ALL_PROJECT_NAMES, "GET_ALL_PROJECT_NAMES");
 
-		COMMAND_NAME.put(SAVE_REPORT_SETTING, "SAVE_PROPERTY");
 		COMMAND_NAME.put(LOGIN, "LOGIN");
 		COMMAND_NAME.put(GENERATE_IDENTIFY_REPORT, "GENERATE_IDENTIFY_REPORT");
 		COMMAND_NAME.put(GENERATE_SPDX_REPORT, "GENERATE_SPDX_REPORT");

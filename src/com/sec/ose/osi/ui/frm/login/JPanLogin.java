@@ -22,13 +22,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -47,6 +46,8 @@ import com.sec.ose.osi.ui.UISharedData;
 import com.sec.ose.osi.ui.cache.CacheablePanel;
 import com.sec.ose.osi.ui.cache.UICache;
 import com.sec.ose.osi.ui.cache.UIEntity;
+import com.sec.ose.osi.util.Property;
+import com.sec.ose.osi.util.ProxyUtil;
 
 /**
  * JPanLogin
@@ -58,21 +59,19 @@ public class JPanLogin extends CacheablePanel {
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel jPanelUserInfo = null;
-	private JPanel jPanelCheckBox = null;
-	private JPanel jPanelServer = null;
-	private JLabel jLabelUser = null;
 	private JTextField jTextFieldUser = null;
-	private JLabel jLabelPwd = null;
 	private JPasswordField jPasswordField = null;
-	private JLabel jLabelServer = null;
-	
-	private JCheckBox jCheckBoxRememberIDOnly = null;
-	private JLabel jLabelRememberID = null;
-	
 	private JTextField jTextFieldServerIP = null;
 
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
+	private JButton jButtonAdvanced = null;
+	
+	private JPanel jPanelForProxyInfo = null;
+	private JPanel jPanelProxyInfo = null;
+	private JTextField jTextFieldProxyHost = null;
+	private JTextField jTextFieldProxyPort = null;
+	private JTextField jTextFieldProxyBypass = null;
 	
 	private JPanel jPanelForUserInfo = null;
 	private JPanel jPanelForOkReset = null;
@@ -101,13 +100,9 @@ public class JPanLogin extends CacheablePanel {
 		if(login == null) {
 			return;
 		}
-		
+
+		getJTextFieldUser().setText(login.getUserID());
 		getJTextFieldServerIP().setText(login.getProtexServerIP());
-		getJCheckBoxRememberIDOnly().setSelected(login.isRememberIDOnly());
-		
-		if(login.isRememberIDOnly() == true) {
-			jTextFieldUser.setText(login.getUserID());
-		}
 		
 		mEventHandler.handle(EventHandler.LOAD_FROM_CACHE);
 	}
@@ -115,14 +110,12 @@ public class JPanLogin extends CacheablePanel {
 	public void setFocus() {
 				
 		// Set Focus
-		if(jTextFieldUser.getText().length() == 0) {
-			jTextFieldUser.requestFocusInWindow();
+		if(getJTextFieldUser().getText().length() == 0) {
+			getJTextFieldUser().requestFocusInWindow();
 		} else if(jPasswordField.getPassword().length == 0) {
-			jPasswordField.requestFocusInWindow();
-			log.debug("Request Focus for PWD: "+jPasswordField.isFocusOwner());
-
+			getJPasswordField().requestFocusInWindow();
 		} else if(jTextFieldServerIP.getText().length() == 0) {
-			jTextFieldServerIP.requestFocusInWindow();
+			getJTextFieldServerIP().requestFocusInWindow();
 		}
 	}
 
@@ -130,8 +123,7 @@ public class JPanLogin extends CacheablePanel {
 		UELogin login = new UELogin(
 				getJTextFieldUser().getText().trim(),
 				new String(jPasswordField.getPassword()),
-				getJTextFieldServerIP().getText().trim(),
-				getJCheckBoxRememberIDOnly().isSelected()
+				getJTextFieldServerIP().getText().trim()
 			);
 
 		return login;
@@ -157,6 +149,11 @@ public class JPanLogin extends CacheablePanel {
 		gridBagConstraints.insets = new Insets(0, 0, 0, 0);		
 		this.add(getJPanelBase(), gridBagConstraints);
 
+		// PROXY
+		getJTextProxyHost().setText(ProxyUtil.getInstance().getProxyHost());
+		getJTextProxyPort().setText(ProxyUtil.getInstance().getProxyPort());
+		getJTextProxyBypass().setText(ProxyUtil.getInstance().getProxyBypass());
+		
 	}
 
 	/**
@@ -172,7 +169,7 @@ public class JPanLogin extends CacheablePanel {
 			jPanelUserInfo.setLayout(new GridBagLayout());
 			
 			// User ID
-			jLabelUser = new JLabel("User ID:");
+			JLabel jLabelUser = new JLabel("User ID:");
 			jLabelUser.setHorizontalAlignment(SwingConstants.RIGHT);
 			jLabelUser.setText("User ID :");
 			jLabelUser.setEnabled(true);
@@ -192,7 +189,7 @@ public class JPanLogin extends CacheablePanel {
 			jPanelUserInfo.add(getJTextFieldUser(), gridBagConstraints1);
 			
 			// Password
-			jLabelPwd = new JLabel();
+			JLabel jLabelPwd = new JLabel();
 			jLabelPwd.setText("Password :");
 			jLabelPwd.setHorizontalAlignment(SwingConstants.RIGHT);
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
@@ -211,7 +208,7 @@ public class JPanLogin extends CacheablePanel {
 			jPanelUserInfo.add(getJPasswordField(), gridBagConstraints3);
 			
 			// Protex Server IP
-			jLabelServer = new JLabel();
+			JLabel jLabelServer = new JLabel();
 			jLabelServer.setText("Protex Server IP :");
 			jLabelServer.setHorizontalAlignment(SwingConstants.RIGHT);
 			jLabelServer.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
@@ -219,67 +216,18 @@ public class JPanLogin extends CacheablePanel {
 			gridBagConstraints11.gridy = 2;
 			gridBagConstraints11.gridx = 0;
 			gridBagConstraints11.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints11.insets = new Insets(0, 10, 0, 0);
+			gridBagConstraints11.insets = new Insets(0, 10, 5, 0);
 			jPanelUserInfo.add(jLabelServer, gridBagConstraints11);
 			
 			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 			gridBagConstraints21.gridy = 2;
 			gridBagConstraints21.gridx = 1;
 			gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints21.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints21.insets = new Insets(5, 5, 10, 5);
 			
-			jPanelUserInfo.add(getJPanelServer(), gridBagConstraints21);
+			jPanelUserInfo.add(getJTextFieldServerIP(), gridBagConstraints21);
 		}
 		return jPanelUserInfo;
-	}
-
-	/**
-	 * This method initializes jPanelCheckBox	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelCheckBox() {
-		if (jPanelCheckBox == null) {
-			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-			gridBagConstraints9.gridx = 1;
-			gridBagConstraints9.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints9.gridy = 1;
-			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-			gridBagConstraints8.gridx = 0;
-			gridBagConstraints8.gridy = 1;
-			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.gridx = 1;
-			gridBagConstraints7.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints7.gridy = 0;
-			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-			gridBagConstraints6.gridx = 0;
-			gridBagConstraints6.gridy = 0;
-			jPanelCheckBox = new JPanel();
-			jPanelCheckBox.setLayout(new GridBagLayout());
-			jPanelCheckBox.add(getJCheckBoxRememberIDOnly(), gridBagConstraints6);
-			jPanelCheckBox.add(getJLabelRememberID(), gridBagConstraints7);
-		}
-		return jPanelCheckBox;
-	}
-
-	/**
-	 * This method initializes jPanelServer	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getJPanelServer() {
-		if (jPanelServer == null) {
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.fill = GridBagConstraints.BOTH;
-			gridBagConstraints4.gridy = 0;
-			gridBagConstraints4.weightx = 1.0;
-			gridBagConstraints4.insets = new Insets(5, 0, 5, 5);
-			gridBagConstraints4.gridx = 0;
-			jPanelServer = new JPanel();
-			jPanelServer.setLayout(new GridBagLayout());
-			jPanelServer.add(getJTextFieldServerIP(), gridBagConstraints4);
-		}
-		return jPanelServer;
 	}
 
 	/**
@@ -303,6 +251,16 @@ public class JPanLogin extends CacheablePanel {
 						mEventHandler.handle(EventHandler.ENTER_KEY_TYTPED);
 					}
 				}
+			});
+			jTextFieldUser.addFocusListener(new FocusListener() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	            	jTextFieldUser.selectAll();
+	            }
+	            @Override
+	            public void focusLost(FocusEvent e) {
+	            	jTextFieldUser.select(0, 0);
+	            }
 			});
 		}
 		return jTextFieldUser;
@@ -328,6 +286,16 @@ public class JPanLogin extends CacheablePanel {
 						mEventHandler.handle(EventHandler.ENTER_KEY_TYTPED);
 					}
 				}
+			});
+			jPasswordField.addFocusListener(new FocusListener() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	            	jPasswordField.selectAll();
+	            }
+	            @Override
+	            public void focusLost(FocusEvent e) {
+	            	jPasswordField.select(0, 0);
+	            }
 			});
 		}
 		return jPasswordField;
@@ -359,48 +327,20 @@ public class JPanLogin extends CacheablePanel {
 					}
 				}
 			});
+			jTextFieldServerIP.addFocusListener(new FocusListener() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	            	jTextFieldServerIP.selectAll();
+	            }
+	            @Override
+	            public void focusLost(FocusEvent e) {
+	            	jTextFieldServerIP.select(0, 0);
+	            }
+			});
 		}
 		return jTextFieldServerIP;
 	};
 	
-	/**
-	 * This method initializes jCheckBoxRemberID	
-	 * 	
-	 * @return javax.swing.JCheckBox	
-	 */
-	private JCheckBox getJCheckBoxRememberIDOnly() {
-		if (jCheckBoxRememberIDOnly == null) {
-			jCheckBoxRememberIDOnly = new JCheckBox();
-			jCheckBoxRememberIDOnly.setSelected(true);
-
-			jCheckBoxRememberIDOnly.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					log.debug("itemStateChanged() - remember ID");
-					mEventHandler.handle(EventHandler.CHBOX_REMEMBER_ID_ONLY);
-			
-				}
-			});
-		}
-		return jCheckBoxRememberIDOnly;
-	}
-	
-	private JLabel getJLabelRememberID() {
-		if (jLabelRememberID == null) {
-			jLabelRememberID = new JLabel();
-			jLabelRememberID.setText("Remember ID");
-
-			jLabelRememberID.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent e) {
-					getJCheckBoxRememberIDOnly().setSelected(!getJCheckBoxRememberIDOnly().isSelected());
-					log.debug("MouseEvent() - remember ID");
-					mEventHandler.handle(EventHandler.CHBOX_REMEMBER_ID_ONLY);
-			
-				}
-			});
-		}
-		return jLabelRememberID;
-	}
-
 	/**
 	 * This method initializes jPanel1	
 	 * 	
@@ -408,10 +348,6 @@ public class JPanLogin extends CacheablePanel {
 	 */
 	private JPanel getJPanelForUserInfo() {
 		if (jPanelForUserInfo == null) {
-			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
-			gridBagConstraints10.insets = new Insets(10, 85, 15, 70);
-			gridBagConstraints10.gridy = 1;
-			gridBagConstraints10.gridx = 0;
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints5.gridx = -1;
@@ -420,12 +356,11 @@ public class JPanLogin extends CacheablePanel {
 			gridBagConstraints5.anchor = GridBagConstraints.CENTER;
 			gridBagConstraints5.weightx = 1.0;
 			gridBagConstraints5.weighty = 0.0;
-			gridBagConstraints5.insets = new Insets(10, 10, 0, 20);
+			//gridBagConstraints5.insets = new Insets(10, 10, 0, 20);
 			jPanelForUserInfo = new JPanel();
 			jPanelForUserInfo.setLayout(new GridBagLayout());
 			jPanelForUserInfo.setBorder(BorderFactory.createTitledBorder(null, "User Info", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
 			jPanelForUserInfo.add(getJPanelUserInfo(), gridBagConstraints5);
-			jPanelForUserInfo.add(getJPanelCheckBox(), gridBagConstraints10);
 		}
 		return jPanelForUserInfo;
 	}
@@ -439,15 +374,25 @@ public class JPanLogin extends CacheablePanel {
 	private JPanel getJPanelForOkReset() {
 		if (jPanelForOkReset == null) {
 			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.insets = new Insets(18, 0, 10, 0);
+			gridBagConstraints15.insets = new Insets(5, 0, 7, 0);
 			gridBagConstraints15.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints15.gridx = 0;
+			gridBagConstraints15.gridy = 0;
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+			gridBagConstraints12.insets = new Insets(0, 0, 0, 0);
+			gridBagConstraints12.fill = GridBagConstraints.HORIZONTAL;
 			gridBagConstraints12.gridx = 0;
 			gridBagConstraints12.gridy = 1;
+			GridBagConstraints gridBagConstraintsAdvanced = new GridBagConstraints();
+			gridBagConstraintsAdvanced.insets = new Insets(20, 0, 0, 0);
+			gridBagConstraintsAdvanced.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsAdvanced.gridx = 0;
+			gridBagConstraintsAdvanced.gridy = 3;
 			jPanelForOkReset = new JPanel();
 			jPanelForOkReset.setLayout(new GridBagLayout());
 			jPanelForOkReset.add(getJButtonOK(), gridBagConstraints15);
 			jPanelForOkReset.add(getJButtonCancel(), gridBagConstraints12);
+			jPanelForOkReset.add(getJButtonAdvanced(), gridBagConstraintsAdvanced);
 		}
 		return jPanelForOkReset;
 	}
@@ -464,7 +409,6 @@ public class JPanLogin extends CacheablePanel {
 			jButtonOK.setPreferredSize(new Dimension(100, 28));
 			jButtonOK.setEnabled(true);
 			jButtonOK.addActionListener(new java.awt.event.ActionListener() {
-				
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					log.debug("actionPerformed() - BtnLogin");
 					
@@ -500,45 +444,217 @@ public class JPanLogin extends CacheablePanel {
 			jButtonCancel = new JButton();
 			jButtonCancel.setText("Cancel");
 			jButtonCancel.setEnabled(true);
-			jButtonCancel.setFocusable(false);
 			jButtonCancel.setPreferredSize(new Dimension(100, 28));
 			jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					mEventHandler.handle(EventHandler.BTN_CANCEL);		
+					mEventHandler.handle(EventHandler.BTN_CANCEL);
+				}
+			});
+			jButtonCancel.addKeyListener(new java.awt.event.KeyAdapter() {
+				public void keyReleased(java.awt.event.KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+						mEventHandler.handle(EventHandler.BTN_CANCEL);
+					}
 				}
 			});
 		}
 		return jButtonCancel;
 	}	
 
-	/**
-	 * This method initializes jPanel3	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
+	private JButton getJButtonAdvanced() {
+		if (jButtonAdvanced == null) {
+			jButtonAdvanced = new JButton();
+			jButtonAdvanced.setText("Advanced..");
+			jButtonAdvanced.setEnabled(true);
+			//jButtonAdvanced.setFocusable(false);
+			jButtonAdvanced.setPreferredSize(new Dimension(100, 28));
+			jButtonAdvanced.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					mEventHandler.handle(EventHandler.BTN_ADVANCED);
+				}
+			});
+			jButtonAdvanced.addKeyListener(new java.awt.event.KeyAdapter() {
+				public void keyReleased(java.awt.event.KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+						mEventHandler.handle(EventHandler.BTN_ADVANCED);
+					}
+				}
+			});
+		}
+		return jButtonAdvanced;
+	}
+	
+	/****************
+	 *  Proxy Info
+	 ***************/
+
+	private JPanel getJPanelForProxyInfo() {
+		if (jPanelForProxyInfo == null) {
+			GridBagConstraints gridBagConstraintsProxyInfo = new GridBagConstraints();
+			gridBagConstraintsProxyInfo.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsProxyInfo.gridx = -1;
+			gridBagConstraintsProxyInfo.gridy = -1;
+			gridBagConstraintsProxyInfo.gridwidth = 1;
+			gridBagConstraintsProxyInfo.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsProxyInfo.weightx = 1.0;
+			gridBagConstraintsProxyInfo.weighty = 0.0;
+			//gridBagConstraints5.insets = new Insets(10, 10, 0, 20);
+			jPanelForProxyInfo = new JPanel();
+			jPanelForProxyInfo.setLayout(new GridBagLayout());
+			jPanelForProxyInfo.setBorder(BorderFactory.createTitledBorder(null, "Proxy Setting", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
+			jPanelForProxyInfo.add(getJPanelProxyInfo(), gridBagConstraintsProxyInfo);
+		}
+		return jPanelForProxyInfo;
+	}
+	
+	private JPanel getJPanelProxyInfo() {
+		
+		if (jPanelProxyInfo == null) {
+			
+			jPanelProxyInfo = new JPanel();
+			jPanelProxyInfo.setLayout(new GridBagLayout());
+			
+			// Proxy Host
+			JLabel jLabelProxyHost = new JLabel("Proxy Host :");
+			jLabelProxyHost.setHorizontalAlignment(SwingConstants.RIGHT);
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.gridy = 0;
+			gridBagConstraints.gridx = 0;
+			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints.insets = new Insets(0, 10, 0, 0);
+			jPanelProxyInfo.add(jLabelProxyHost, gridBagConstraints);
+
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.fill = GridBagConstraints.BOTH;
+			gridBagConstraints1.gridy = 0;
+			gridBagConstraints1.gridx = 1;
+			gridBagConstraints1.weightx = 0.5;
+			gridBagConstraints1.insets = new Insets(5, 5, 5, 5);
+			jPanelProxyInfo.add(getJTextProxyHost(), gridBagConstraints1);
+			
+			// Proxy Port
+			JLabel jLabelProxyPort = new JLabel("Port :");
+			jLabelProxyPort.setHorizontalAlignment(SwingConstants.RIGHT);
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.gridy = 0;
+			gridBagConstraints2.gridx = 2;
+			gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints2.insets = new Insets(0, 10, 0, 0);
+			jPanelProxyInfo.add(jLabelProxyPort, gridBagConstraints2);
+			
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.fill = GridBagConstraints.BOTH;
+			gridBagConstraints3.gridy = 0;
+			gridBagConstraints3.gridx = 3;
+			gridBagConstraints3.weightx = 0.5;
+			gridBagConstraints3.insets = new Insets(5, 5, 5, 5);
+			jPanelProxyInfo.add(getJTextProxyPort(), gridBagConstraints3);
+			
+			// Proxy Bypass
+			JLabel jLabelProxyBypass = new JLabel();
+			jLabelProxyBypass.setText("     Proxy Bypass :");
+			jLabelProxyBypass.setHorizontalAlignment(SwingConstants.RIGHT);
+			jLabelProxyBypass.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			gridBagConstraints11.gridy = 1;
+			gridBagConstraints11.gridx = 0;
+			gridBagConstraints11.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints11.insets = new Insets(0, 10, 5, 0);
+			jPanelProxyInfo.add(jLabelProxyBypass, gridBagConstraints11);
+			
+			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+			gridBagConstraints21.gridy = 1;
+			gridBagConstraints21.gridx = 1;
+			gridBagConstraints21.gridwidth = 3;
+			//gridBagConstraints21.weightx = 1.0;
+			gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraints21.insets = new Insets(5, 5, 10, 5);
+			
+			jPanelProxyInfo.add(getJTextProxyBypass(), gridBagConstraints21);
+		}
+		return jPanelProxyInfo;
+	}
+
+	private JTextField getJTextProxyHost() {
+		if (jTextFieldProxyHost == null) {
+			jTextFieldProxyHost = new JTextField();
+			jTextFieldProxyHost.setPreferredSize(new Dimension(130, 22));
+			
+			jTextFieldProxyHost.addFocusListener(new FocusListener() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	            	jTextFieldProxyHost.selectAll();
+	            }
+	            @Override
+	            public void focusLost(FocusEvent e) {
+	            	jTextFieldProxyHost.select(0, 0);
+	            }
+			});
+		}
+		return jTextFieldProxyHost;
+	};
+
+	private JTextField getJTextProxyPort() {
+		if (jTextFieldProxyPort == null) {
+			jTextFieldProxyPort = new JTextField();
+			jTextFieldProxyPort.setPreferredSize(new Dimension(50, 22));
+			
+			jTextFieldProxyPort.addFocusListener(new FocusListener() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	            	jTextFieldProxyPort.selectAll();
+	            }
+	            @Override
+	            public void focusLost(FocusEvent e) {
+	            	jTextFieldProxyPort.select(0, 0);
+	            }
+			});
+		}
+		return jTextFieldProxyPort;
+	};
+
+	private JTextField getJTextProxyBypass() {
+		if (jTextFieldProxyBypass == null) {
+			jTextFieldProxyBypass = new JTextField();
+			jTextFieldProxyBypass.setPreferredSize(new Dimension(200, 22));
+			
+			jTextFieldProxyBypass.addFocusListener(new FocusListener() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	            	jTextFieldProxyBypass.selectAll();
+	            }
+	            @Override
+	            public void focusLost(FocusEvent e) {
+	            	jTextFieldProxyBypass.select(0, 0);
+	            }
+			});
+		}
+		return jTextFieldProxyBypass;
+	};
+	
+	/*********
+	 * Base
+	 **********/
 	private JPanel getJPanelBase() {
 		if (jPanelBase == null) {
-			GridBagConstraints gridBagConstraints17 = new GridBagConstraints();
-			gridBagConstraints17.gridx = 0;
-			gridBagConstraints17.fill = GridBagConstraints.BOTH;
-			gridBagConstraints17.insets = new Insets(0, 10, 10, 10);
-			gridBagConstraints17.weightx = 1.0;
-			gridBagConstraints17.weighty = 1.0;
-			gridBagConstraints17.gridwidth = 1;
-			gridBagConstraints17.gridy = 1;
-			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.weightx = 1.0;
-			gridBagConstraints14.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints14.insets = new Insets(10, 10, 10, 10);
-			gridBagConstraints14.weighty = 1.0;
-			gridBagConstraints14.fill = GridBagConstraints.HORIZONTAL;
-			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-			gridBagConstraints13.anchor = GridBagConstraints.NORTH;
-			gridBagConstraints13.insets = new Insets(0, 0, 10, 10);
+			GridBagConstraints gridBagConstraintsUserInfo = new GridBagConstraints();
+			gridBagConstraintsUserInfo.gridx = 0;
+			gridBagConstraintsUserInfo.gridy = 0;
+			gridBagConstraintsUserInfo.weightx = 1.0;
+			gridBagConstraintsUserInfo.insets = new Insets(0, 10, 0, 10);
+			gridBagConstraintsUserInfo.fill = GridBagConstraints.HORIZONTAL;
+
+			GridBagConstraints gridBagConstraintsOkReset = new GridBagConstraints();
+			gridBagConstraintsOkReset.gridx = 1;
+			gridBagConstraintsOkReset.gridy = 0;
+			gridBagConstraintsOkReset.weighty = 1.0;
+			gridBagConstraintsOkReset.insets = new Insets(0, 0, 0, 10);
+			gridBagConstraintsOkReset.fill = GridBagConstraints.BOTH;
+
 			jPanelBase = new JPanel();
 			jPanelBase.setLayout(new GridBagLayout());
-			jPanelBase.add(getJPanelForUserInfo(), gridBagConstraints14);
-			jPanelBase.add(getJPanelForOkReset(), gridBagConstraints13);
+			jPanelBase.add(getJPanelForUserInfo(), gridBagConstraintsUserInfo);
+			jPanelBase.add(getJPanelForOkReset(), gridBagConstraintsOkReset);
 		}
 		return jPanelBase;
 	}
@@ -554,6 +670,7 @@ public class JPanLogin extends CacheablePanel {
 		protected static final int ENTER_KEY_TYTPED 			= 6;
 		protected static final int BTN_LOGIN					= 7; 
 		protected static final int BTN_CANCEL					= 8;
+		protected static final int BTN_ADVANCED					= 9;
 		
 		public void handle(int action) {
 
@@ -595,7 +712,25 @@ public class JPanLogin extends CacheablePanel {
 					
 				case BTN_CANCEL:
 					System.exit(0);
-					break;		
+					break;
+				
+				case BTN_ADVANCED:
+
+					if(getJPanelBase().getComponentCount() == 2) {
+						GridBagConstraints gridBagConstraintsProxyInfo = new GridBagConstraints();
+						gridBagConstraintsProxyInfo.gridx = 0;
+						gridBagConstraintsProxyInfo.gridy = 1;
+						gridBagConstraintsProxyInfo.weightx = 1.0;
+						gridBagConstraintsProxyInfo.insets = new Insets(0, 10, 18, 10);
+						gridBagConstraintsProxyInfo.fill = GridBagConstraints.HORIZONTAL;
+						getJPanelBase().add(getJPanelForProxyInfo(), gridBagConstraintsProxyInfo);
+						loginFrame.setSize(520, 300);
+					} else {
+						getJPanelBase().remove(getJPanelForProxyInfo());
+						loginFrame.setSize(520, 190);
+					}
+					
+					break;
 			}
 		}
 
@@ -605,8 +740,14 @@ public class JPanLogin extends CacheablePanel {
 				mCache.setClear();
 			saveToCache();
 			
-			UIEntity ueLlogin = exportUIEntity();					
-			
+			UIEntity ueLlogin = exportUIEntity();
+
+			// set Proxy
+			String proxyHost = getJTextProxyHost().getText().trim();
+			String proxyPort = getJTextProxyPort().getText().trim();
+			String proxyBypass = getJTextProxyBypass().getText().trim();
+			ProxyUtil.getInstance().setProxyInfo(proxyHost, proxyPort, proxyBypass);
+	    	
 			loginFrame.setVisible(false);
  
 			UIResponseObserver observer = UserRequestHandler.getInstance().handle(

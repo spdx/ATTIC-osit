@@ -29,18 +29,17 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sec.ose.osi.thread.ui_related.UserRequestHandler;
+import com.sec.ose.osi.util.ProxyUtil;
 
 /**
  * JPanProxySetting
  * 
- * @author hankido.lee
+ * @author hankido.lee, sjh.yoo
  *
  */
 public class JPanProxySetting extends JPanel {
@@ -51,13 +50,16 @@ public class JPanProxySetting extends JPanel {
 	private JPanel jPanelButtons = null;
 	private JButton jButtonOK = null;
 	private JButton jButtonCancel = null;
-	private JLabel jLabelProxyServerIP = null;
-	private JLabel jLabelProxyServerPort = null;
-	private JTextField jTextFieldProxyServerIP = null;
-	private JTextField jTextFieldProxyServerPort = null;
+	
+	private JTextField jTextFieldProxyHost = null;
+	private JTextField jTextFieldProxyPort = null;
+	private JTextField jTextFieldProxyBypass = null;
+	
+	private String proxyHost = null;
+	private String proxyPort = null;
+	private String proxyBypass = null;
 	
 	private Component mParent = null;
-	private UEProxySetting mUEProxySetting = new UEProxySetting();
 	
 	public JPanProxySetting() {
 		super();
@@ -77,14 +79,17 @@ public class JPanProxySetting extends JPanel {
 	}
 
 	private void initValues() {
-		this.getJTextFieldProxyServerIP().setText(mUEProxySetting.getProxyServerIP());
-		this.getJTextFieldProxyServerPort().setText(mUEProxySetting.getProxyServerPort());
+		proxyHost = ProxyUtil.getInstance().getProxyHost();
+		proxyPort = ProxyUtil.getInstance().getProxyPort();
+		proxyBypass = ProxyUtil.getInstance().getProxyBypass();
+		this.getJTextFieldProxyHost().setText(proxyHost);
+		this.getJTextFieldProxyPort().setText(proxyPort);
+		this.getJTextFieldProxyBypass().setText(proxyBypass);
 	}
 	
 	public void setVisible(boolean pVisible) {
 		if(pVisible == true) {
 			initValues();
-			
 		}
 	}
 
@@ -127,95 +132,109 @@ public class JPanProxySetting extends JPanel {
 			jPanelValue.setLayout(new GridBagLayout());
 			jPanelValue.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
 			jPanelValue.setPreferredSize(new Dimension(400, 200)); 
-			
-			jLabelProxyServerIP = new JLabel();
-			jLabelProxyServerIP.setText("Server IP : ");
-			jLabelProxyServerIP.setHorizontalAlignment(SwingConstants.RIGHT);
-			
-			GridBagConstraints gridBagConstraintsjLabelReciprocalLicense = new GridBagConstraints();
-			gridBagConstraintsjLabelReciprocalLicense.gridx = 0;
-			gridBagConstraintsjLabelReciprocalLicense.insets = new Insets(10, 20, 5, 0);
-			gridBagConstraintsjLabelReciprocalLicense.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraintsjLabelReciprocalLicense.weightx = 0.0;
-			gridBagConstraintsjLabelReciprocalLicense.weighty = 0.0;
-			gridBagConstraintsjLabelReciprocalLicense.gridy = 1;
-			GridBagConstraints gridBagConstraintsgetJTextFieldReciprocalLicense = new GridBagConstraints();
-			gridBagConstraintsgetJTextFieldReciprocalLicense.gridx = 1;
-			gridBagConstraintsgetJTextFieldReciprocalLicense.weightx = 1.0;
-			gridBagConstraintsgetJTextFieldReciprocalLicense.fill = GridBagConstraints.BOTH;
-			gridBagConstraintsgetJTextFieldReciprocalLicense.insets = new Insets(10, 5, 5, 130);
-			gridBagConstraintsgetJTextFieldReciprocalLicense.gridwidth = 2;
-			gridBagConstraintsgetJTextFieldReciprocalLicense.gridy = 1;
-			
-			
-			jLabelProxyServerPort = new JLabel();
-			jLabelProxyServerPort.setText("Port : ");
-			jLabelProxyServerPort.setHorizontalAlignment(SwingConstants.RIGHT);
-			
-			GridBagConstraints gridBagConstraintsjLabelMajorLicense = new GridBagConstraints();
-			gridBagConstraintsjLabelMajorLicense.gridx = 0;
-			gridBagConstraintsjLabelMajorLicense.insets = new Insets(0, 20, 0, 0);
-			gridBagConstraintsjLabelMajorLicense.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraintsjLabelMajorLicense.weighty = 0.0;
-			gridBagConstraintsjLabelMajorLicense.gridy = 2;
-			
-			GridBagConstraints gridBagConstraintsgetJTextFieldMajorLicense = new GridBagConstraints();
-			gridBagConstraintsgetJTextFieldMajorLicense.gridx = 1;
-			gridBagConstraintsgetJTextFieldMajorLicense.weightx = 1.0;
-			gridBagConstraintsgetJTextFieldMajorLicense.fill = GridBagConstraints.BOTH;
-			gridBagConstraintsgetJTextFieldMajorLicense.insets = new Insets(5, 5, 5, 220);
-			gridBagConstraintsgetJTextFieldMajorLicense.weighty = 0.0;
-			gridBagConstraintsgetJTextFieldMajorLicense.anchor = GridBagConstraints.CENTER;
-			gridBagConstraintsgetJTextFieldMajorLicense.gridy = 2;
-			jPanelValue.add(jLabelProxyServerIP, gridBagConstraintsjLabelReciprocalLicense);
-			jPanelValue.add(getJTextFieldProxyServerIP(), gridBagConstraintsgetJTextFieldReciprocalLicense);
-			jPanelValue.add(jLabelProxyServerPort, gridBagConstraintsjLabelMajorLicense);
-			jPanelValue.add(getJTextFieldProxyServerPort(), gridBagConstraintsgetJTextFieldMajorLicense);
-			jPanelValue.add(getJPanel(), gridBagConstraints2);
 			jPanelValue.add(jLabelEmpty, gridBagConstraints3);
+
+			JLabel jLabelProxyHost = new JLabel("Proxy Host : ",JLabel.RIGHT);
+			GridBagConstraints gridBagConstraintsjLabelProxyHost = new GridBagConstraints();
+			gridBagConstraintsjLabelProxyHost.gridx = 0;
+			gridBagConstraintsjLabelProxyHost.insets = new Insets(10, 20, 5, 0);
+			gridBagConstraintsjLabelProxyHost.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsjLabelProxyHost.weightx = 0.0;
+			gridBagConstraintsjLabelProxyHost.weighty = 0.0;
+			gridBagConstraintsjLabelProxyHost.gridy = 1;
+			jPanelValue.add(jLabelProxyHost, gridBagConstraintsjLabelProxyHost);
 			
-			GridBagConstraints gridBagConstraintsgetJTextFieldAuthorName = new GridBagConstraints();
-			gridBagConstraintsgetJTextFieldAuthorName.gridx = 1;
-			gridBagConstraintsgetJTextFieldAuthorName.weightx = 1.0;
-			gridBagConstraintsgetJTextFieldAuthorName.fill = GridBagConstraints.BOTH;
-			gridBagConstraintsgetJTextFieldAuthorName.insets = new Insets(5, 5, 5, 15);
-			gridBagConstraintsgetJTextFieldAuthorName.gridy =4;
+			GridBagConstraints gridBagConstraintsgetJTextFieldProxyHost = new GridBagConstraints();
+			gridBagConstraintsgetJTextFieldProxyHost.gridx = 1;
+			gridBagConstraintsgetJTextFieldProxyHost.weightx = 1.0;
+			gridBagConstraintsgetJTextFieldProxyHost.fill = GridBagConstraints.BOTH;
+			gridBagConstraintsgetJTextFieldProxyHost.insets = new Insets(10, 5, 5, 100);
+			gridBagConstraintsgetJTextFieldProxyHost.gridwidth = 2;
+			gridBagConstraintsgetJTextFieldProxyHost.gridy = 1;
+			jPanelValue.add(getJTextFieldProxyHost(), gridBagConstraintsgetJTextFieldProxyHost);
 			
-			GridBagConstraints gridBagConstraintsgetJTextFieldGroupName = new GridBagConstraints();
-			gridBagConstraintsgetJTextFieldGroupName.gridx = 1;
-			gridBagConstraintsgetJTextFieldGroupName.weightx = 1.0;
-			gridBagConstraintsgetJTextFieldGroupName.fill = GridBagConstraints.BOTH;
-			gridBagConstraintsgetJTextFieldGroupName.insets = new Insets(5, 5, 5, 15);
-			gridBagConstraintsgetJTextFieldGroupName.gridy = 5;
+			JLabel jLabelProxyPort = new JLabel("Proxy Port : ",JLabel.RIGHT);
+			GridBagConstraints gridBagConstraintsjLabelProxyPort = new GridBagConstraints();
+			gridBagConstraintsjLabelProxyPort.gridx = 0;
+			gridBagConstraintsjLabelProxyPort.insets = new Insets(0, 20, 0, 0);
+			gridBagConstraintsjLabelProxyPort.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsjLabelProxyPort.weighty = 0.0;
+			gridBagConstraintsjLabelProxyPort.gridy = 2;
+			jPanelValue.add(jLabelProxyPort, gridBagConstraintsjLabelProxyPort);
+			
+			GridBagConstraints gridBagConstraintsgetJTextFieldProxyPort = new GridBagConstraints();
+			gridBagConstraintsgetJTextFieldProxyPort.gridx = 1;
+			gridBagConstraintsgetJTextFieldProxyPort.weightx = 1.0;
+			gridBagConstraintsgetJTextFieldProxyPort.fill = GridBagConstraints.BOTH;
+			gridBagConstraintsgetJTextFieldProxyPort.insets = new Insets(5, 5, 5, 220);
+			gridBagConstraintsgetJTextFieldProxyPort.weighty = 0.0;
+			gridBagConstraintsgetJTextFieldProxyPort.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsgetJTextFieldProxyPort.gridy = 2;
+			jPanelValue.add(getJTextFieldProxyPort(), gridBagConstraintsgetJTextFieldProxyPort);
+			
+			JLabel jLabelProxyBypass = new JLabel("Proxy Bypass : ",JLabel.RIGHT);
+			GridBagConstraints gridBagConstraintsjLabelProxyBypass = new GridBagConstraints();
+			gridBagConstraintsjLabelProxyBypass.gridx = 0;
+			gridBagConstraintsjLabelProxyBypass.insets = new Insets(0, 20, 0, 0);
+			gridBagConstraintsjLabelProxyBypass.fill = GridBagConstraints.HORIZONTAL;
+			gridBagConstraintsjLabelProxyBypass.weighty = 0.0;
+			gridBagConstraintsjLabelProxyBypass.gridy = 3;
+			jPanelValue.add(jLabelProxyBypass, gridBagConstraintsjLabelProxyBypass);
+			
+			GridBagConstraints gridBagConstraintsgetJTextFieldProxyBypass = new GridBagConstraints();
+			gridBagConstraintsgetJTextFieldProxyBypass.gridx = 1;
+			gridBagConstraintsgetJTextFieldProxyBypass.weightx = 1.0;
+			gridBagConstraintsgetJTextFieldProxyBypass.fill = GridBagConstraints.BOTH;
+			gridBagConstraintsgetJTextFieldProxyBypass.insets = new Insets(5, 5, 5, 100);
+			gridBagConstraintsgetJTextFieldProxyBypass.weighty = 0.0;
+			gridBagConstraintsgetJTextFieldProxyBypass.anchor = GridBagConstraints.CENTER;
+			gridBagConstraintsgetJTextFieldProxyBypass.gridy = 3;
+			jPanelValue.add(getJTextFieldProxyBypass(), gridBagConstraintsgetJTextFieldProxyBypass);
+			
+			//jPanelValue.add(getJPanel(), gridBagConstraints2);
+			
 			
 		}
 		return jPanelValue;
 	}
 
-	private JTextField getJTextFieldProxyServerIP() {
-		if (jTextFieldProxyServerIP == null) {
-			jTextFieldProxyServerIP = new JTextField();
-			jTextFieldProxyServerIP.setEditable(true);
-			jTextFieldProxyServerIP.addCaretListener(new javax.swing.event.CaretListener() {
+	private JTextField getJTextFieldProxyHost() {
+		if (jTextFieldProxyHost == null) {
+			jTextFieldProxyHost = new JTextField();
+			jTextFieldProxyHost.setEditable(true);
+			jTextFieldProxyHost.addCaretListener(new javax.swing.event.CaretListener() {
 				public void caretUpdate(javax.swing.event.CaretEvent e) {
-					mEventHandler.handle(EventHandler.TF_PROXYSERVERIP);
+					mEventHandler.handle(EventHandler.TF_PROXY_HOST);
 				}
 			});
 		}
-		return jTextFieldProxyServerIP;
+		return jTextFieldProxyHost;
 	}
 	
-	private JTextField getJTextFieldProxyServerPort() {
-		if (jTextFieldProxyServerPort == null) {
-			jTextFieldProxyServerPort = new JTextField();
-			jTextFieldProxyServerPort.setEditable(true);
-			jTextFieldProxyServerPort.addCaretListener(new javax.swing.event.CaretListener() {
+	private JTextField getJTextFieldProxyPort() {
+		if (jTextFieldProxyPort == null) {
+			jTextFieldProxyPort = new JTextField();
+			jTextFieldProxyPort.setEditable(true);
+			jTextFieldProxyPort.addCaretListener(new javax.swing.event.CaretListener() {
 				public void caretUpdate(javax.swing.event.CaretEvent e) {
-					mEventHandler.handle(EventHandler.TF_PROXYSERVERPORT);
+					mEventHandler.handle(EventHandler.TF_PROXY_PORT);
 				}
 			});
 		}
-		return jTextFieldProxyServerPort;
+		return jTextFieldProxyPort;
+	}
+
+	private JTextField getJTextFieldProxyBypass() {
+		if (jTextFieldProxyBypass == null) {
+			jTextFieldProxyBypass = new JTextField();
+			jTextFieldProxyBypass.setEditable(true);
+			jTextFieldProxyBypass.addCaretListener(new javax.swing.event.CaretListener() {
+				public void caretUpdate(javax.swing.event.CaretEvent e) {
+					mEventHandler.handle(EventHandler.TF_PROXY_BYPASS);
+				}
+			});
+		}
+		return jTextFieldProxyBypass;
 	}
 	
 	private JPanel getJPanelButtons() {
@@ -270,12 +289,12 @@ public class JPanProxySetting extends JPanel {
 
 
 	private EventHandler mEventHandler = new EventHandler();
-	private JPanel jPanel = null;
 	private JLabel jLabelEmpty = null;
 	class EventHandler {
 
-		protected static final int TF_PROXYSERVERIP 	= 1;
-		protected static final int TF_PROXYSERVERPORT 	= 2;
+		protected static final int TF_PROXY_HOST 	= 1;
+		protected static final int TF_PROXY_PORT 	= 2;
+		protected static final int TF_PROXY_BYPASS 	= 3;
 		
 		protected static final int BT_SAVE 					= 11;
 		protected static final int BT_CANCEL 				= 12;
@@ -287,16 +306,15 @@ public class JPanProxySetting extends JPanel {
 			
 			switch(pEvent) {
 			
-				case TF_PROXYSERVERIP:
-				case TF_PROXYSERVERPORT:
+				case TF_PROXY_HOST:
+				case TF_PROXY_PORT:
+				case TF_PROXY_BYPASS:
 					
-					if (jTextFieldProxyServerIP != null &&
-							jTextFieldProxyServerIP.getText().equals(mUEProxySetting.getProxyServerIP())==false
-							) {
+					if (!getJTextFieldProxyHost().getText().equals(proxyHost)) {
 						jButtonOK.setEnabled(true);
-					} else if (jTextFieldProxyServerPort != null &&
-							jTextFieldProxyServerPort.getText().equals(mUEProxySetting.getProxyServerPort())==false
-							) {
+					} else if (!getJTextFieldProxyPort().getText().equals(proxyPort)) {
+						jButtonOK.setEnabled(true);
+					} else if (!getJTextFieldProxyBypass().getText().equals(proxyBypass)) {
 						jButtonOK.setEnabled(true);
 					}
 					
@@ -313,15 +331,12 @@ public class JPanProxySetting extends JPanel {
 					
 					
 				case BT_SAVE:
+					proxyHost = getJTextFieldProxyHost().getText().trim();
+					proxyPort = getJTextFieldProxyPort().getText().trim();
+					proxyBypass = getJTextFieldProxyBypass().getText().trim();
+					ProxyUtil.getInstance().setProxyInfo(proxyHost,proxyPort,proxyBypass);
 					
-					UEProxySetting ue = new UEProxySetting();
-					
-					ue.setProxyServerIP(jTextFieldProxyServerIP.getText());
-					ue.setProxyServerPort(jTextFieldProxyServerPort.getText());
-					
-					mUEProxySetting = ue;
-					UserRequestHandler.getInstance().handle(UserRequestHandler.SAVE_PROXY_SETTING, mUEProxySetting);
-					log.debug("save");
+					log.debug("save proxy setting");
 					jButtonOK.setEnabled(false);
 					mParent.setVisible(false);
 					break;
@@ -330,11 +345,4 @@ public class JPanProxySetting extends JPanel {
 		}
 	}
 
-	private JPanel getJPanel() {
-		if (jPanel == null) {
-			jPanel = new JPanel();
-			jPanel.setLayout(new GridBagLayout());
-		}
-		return jPanel;
-	}
 }

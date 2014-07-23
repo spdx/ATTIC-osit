@@ -54,7 +54,7 @@ public class JDlgSetting extends JDialog {
 	public static final int TAB_INDEX_REPORT = 2;
 	
 	private static final String TAB_TITLE_MONITOR = "Project Analysis";
-	private static final String TAB_TITLE_PROXY = "Proxy Server";
+	private static final String TAB_TITLE_PROXY = "Proxy";
 	private static final String TAB_TITLE_REPORT = "Report";
 	
 	public static JDlgSetting getInstance() {

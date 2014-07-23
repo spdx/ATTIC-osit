@@ -73,13 +73,6 @@ public class UIMain {
 			System.exit(0);
 		}
 		
-		// set Proxy
-		if("N".equals(Property.getInstance().getProperty(Property.PROXY_USED_BY_SERVER))) {
-			ProxyUtil.getInstance().setEnabled(false);
-		} else {
-			ProxyUtil.getInstance().setEnabled(true);
-		}
-    	
 		// App Initialize
 	    BackgroundJobManager.getInstance().startBeforeLoginTaskThread();
 		

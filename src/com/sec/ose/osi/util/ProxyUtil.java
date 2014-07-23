@@ -34,82 +34,6 @@ public class ProxyUtil {
 
 	private static ProxyUtil instance = null;
 
-	public Proxy getProxy() {
-		
-		if(isValidProxyInfo() == false)
-			return null;
-		
-		Proxy proxy = new Proxy(
-				Proxy.Type.HTTP, 
-				new InetSocketAddress(
-						this.getProxyServerIP(), 
-						this.getProxyServerPort()));
-		
-		log.debug("Current Proxy Server Info: <"+this.getProxyServerIP()+":"+this.getProxyServerPort()+">");
-		
-		return proxy;
-	}
-
-	protected boolean isValidProxyInfo() {
-		
-		String proxyServerIP = Property.getInstance().getProperty(Property.PROXY_SERVER_IP);
-		
-		if(proxyServerIP == null || 
-				proxyServerIP.trim().length() == 0) {
-		
-			log.info("Proxy Server Info is not existed: no proxy server IP");
-			return false;
-		}
-		
-		
-		String strProxyServerPort = Property.getInstance().getProperty(Property.PROXY_SERVER_PORT);
-		if(strProxyServerPort == null || 
-				strProxyServerPort.trim().length() == 0) {
-			log.info("Proxy Server Info is not existed: no proxy server port");
-			return false;
-		}
-		
-		try {
-			Integer.parseInt(strProxyServerPort);
-		} catch(NumberFormatException e) {
-			log.error("Malformed Proxy Server Info: <"+strProxyServerPort+">");
-			log.debug(e.getMessage());
-			return false;
-		}
-			
-		return true;
-	}
-
-	private int getProxyServerPort() {
-		
-		int proxyServerPort=-1;
-		
-		String strProxyServerPort = Property.getInstance().getProperty(Property.PROXY_SERVER_PORT);
-		if(strProxyServerPort == null)
-			return -1;
-		
-		try {
-			proxyServerPort = Integer.parseInt(strProxyServerPort);
-		} catch(NumberFormatException e) {
-			return -1;
-		}
-			
-		return proxyServerPort;
-		
-	}
-
-	private String getProxyServerIP() {
-		
-		String proxyServerIP = Property.getInstance().getProperty(Property.PROXY_SERVER_IP);
-		
-		if(proxyServerIP == null || 
-				proxyServerIP.trim().length() == 0)
-			return "";
-		
-		return proxyServerIP;
-		
-	}
-
 	public static ProxyUtil getInstance() {
 		if(instance == null) {
 			synchronized(Property.class) {
@@ -120,25 +44,70 @@ public class ProxyUtil {
 		}
 		return instance;
 	}
+	
+	public String getProxyHost() {
+		String proxyHost = Property.getInstance().getProperty(Property.PROXY_HOST);
 
-	public void setEnabled(boolean enabled) {
-		
-		if(isValidProxyInfo() == false) {
-			System.clearProperty("http.proxyHost");
-			System.clearProperty("http.proxyPort");
-			log.debug("Proxy disabled..");
-			return;
-		}
-		
-		if(enabled) {
-			System.setProperty("http.proxyHost", Property.getInstance().getProperty(Property.PROXY_SERVER_IP));
-			System.setProperty("http.proxyPort", Property.getInstance().getProperty(Property.PROXY_SERVER_PORT));
-			log.debug("Proxy enabled..");
-		} else {
-			System.clearProperty("http.proxyHost");
-			System.clearProperty("http.proxyPort");
-			log.debug("Proxy disabled..");
-		}
+		if(proxyHost == null || proxyHost.trim().length() == 0) return "";
+		return proxyHost;
+	}
+
+	public String getProxyPort() {
+		String proxyPort = Property.getInstance().getProperty(Property.PROXY_PORT);
+
+		if(proxyPort == null || proxyPort.trim().length() == 0) return "";
+		return proxyPort;
+	}
+
+	public String getProxyBypass() {
+		String proxyBypass = Property.getInstance().getProperty(Property.PROXY_BYPASS);
+
+		if(proxyBypass == null || proxyBypass.trim().length() == 0) return "";
+		return proxyBypass;
 	}
 	
+	public void setProxyInfo(String mProxyHost, String mProxyPort, String mProxyBypass) {
+		if(!getProxyHost().equals(mProxyHost)) Property.getInstance().setProperty(Property.PROXY_HOST, mProxyHost);
+		if(!getProxyPort().equals(mProxyPort)) Property.getInstance().setProperty(Property.PROXY_PORT, mProxyPort);
+		if(!getProxyBypass().equals(mProxyBypass)) Property.getInstance().setProperty(Property.PROXY_BYPASS, mProxyBypass);
+		
+		if(!isValidProxyInfo(mProxyHost, mProxyPort, mProxyBypass)) {
+			System.setProperty("proxySet", "false");
+			System.clearProperty("http.proxyHost");
+			System.clearProperty("http.proxyPort");
+			log.debug("Proxy disabled..");
+		} else {
+			System.setProperty("proxySet", "true");
+			System.setProperty("http.proxyHost", mProxyHost);
+			System.setProperty("http.proxyPort", mProxyPort);
+			System.setProperty("http.nonProxyHosts", mProxyBypass);
+			log.debug("Proxy enabled..[" + mProxyHost + ":"+mProxyPort+"]");
+			if(mProxyBypass.length() > 0) log.debug("nonProxyHosts : [" + mProxyBypass +"]");
+		}
+		
+	}
+
+	private boolean isValidProxyInfo(String mProxyHost, String mProxyPort, String mProxyBypass) {
+		
+		if(mProxyHost == null || mProxyHost.trim().length() == 0) {
+			log.info("Proxy Host is not existed: no proxy host");
+			return false;
+		}
+
+		if(mProxyPort == null || mProxyPort.trim().length() == 0) {
+			log.info("Proxy Server Info is not existed: no proxy port");
+			return false;
+		}
+		
+		try {
+			Integer.parseInt(mProxyPort);
+		} catch(NumberFormatException e) {
+			log.error("Malformed Proxy Server Info: <"+mProxyPort+">");
+			log.debug(e.getMessage());
+			return false;
+		}
+			
+		return true;
+	}
+
 }

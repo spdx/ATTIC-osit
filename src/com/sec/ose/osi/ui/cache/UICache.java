@@ -114,14 +114,13 @@ public class UICache implements Serializable {
 			return;
 		}
 
-		log.debug("UICache: load cache from cache file");
+		log.debug("load cache from cache file");
 
 		ObjectInputStream ois = null;
 		try {
 			ois = new ObjectInputStream(new FileInputStream(file));	// IO, FileNotFound
 		
 			this.mMap = (HashMap<Integer, UIEntity>) ois.readObject();							// ClassNotFound
-
 		
 		} catch (FileNotFoundException e) {
 			log.warn(e);

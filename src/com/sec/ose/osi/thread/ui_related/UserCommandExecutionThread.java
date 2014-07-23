@@ -52,8 +52,6 @@ import com.sec.ose.osi.ui.UISDKInterfaceManager;
 import com.sec.ose.osi.ui.UISharedData;
 import com.sec.ose.osi.ui.cache.CacheableMgr;
 import com.sec.ose.osi.ui.cache.UIEntity;
-import com.sec.ose.osi.ui.dialog.setting.UEProxySetting;
-import com.sec.ose.osi.ui.dialog.setting.UEReportProperty;
 import com.sec.ose.osi.ui.dialog.showProjectInfo.UEProjectInfo;
 import com.sec.ose.osi.ui.frm.login.UELogin;
 import com.sec.ose.osi.ui.frm.main.JFrmMain;
@@ -225,23 +223,6 @@ public class UserCommandExecutionThread implements Runnable {
 				}
 				break;
 		
-			case UserRequestHandler.SAVE_REPORT_SETTING:
-				UEReportProperty ueProp = (UEReportProperty) mEntity;
-				
-				prop.setProperty(Property.DEFALT_REPORT_LOCATION, ueProp.getDefaultReportLocation());
-
-				this.mObserver.setSuccessMessage("Properties have been saved successfully.");
-				
-				break;
-				
-			case UserRequestHandler.SAVE_PROXY_SETTING:
-				UEProxySetting ueProxySetting = (UEProxySetting) mEntity;
-				
-				prop.setProperty(Property.PROXY_SERVER_IP, ueProxySetting.getProxyServerIP());
-				prop.setProperty(Property.PROXY_SERVER_PORT, ueProxySetting.getProxyServerPort());
-				break;
-				
-				
 			case UserRequestHandler.LOGIN:
 				UELogin ueLogin = (UELogin) mEntity;
 				this.mObserver.pushMessage("Sending login request to server");

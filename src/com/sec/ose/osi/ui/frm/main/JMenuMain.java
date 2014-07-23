@@ -175,7 +175,7 @@ public class JMenuMain extends JMenuBar {
 	private JMenuItem getJMenuItemProxyServer() {
 		if (jMenuItemProxyServer == null) {
 			jMenuItemProxyServer = new JMenuItem();
-			jMenuItemProxyServer.setText("Proxy Server");
+			jMenuItemProxyServer.setText("Proxy");
 			jMenuItemProxyServer.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					log.debug("jMenuItemProxyServer actionPerformed()");

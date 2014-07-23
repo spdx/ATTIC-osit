@@ -37,8 +37,8 @@ import javax.swing.border.TitledBorder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sec.ose.osi.thread.ui_related.UserRequestHandler;
 import com.sec.ose.osi.ui.frm.main.report.file_explorer.JFCFolderExplorer;
+import com.sec.ose.osi.util.Property;
 
 /**
  * JPanReportProperty
@@ -62,9 +62,12 @@ public class JPanReportProperty extends JPanel {
 	private JPanel jPanelDefaultReportLocation = null;
 	private JTextField jTextFieldDefaultReportLocation = null;
 	private JButton jButtonFileExplorer = null;
+	
+	private String defaultReportLocation = null;
+	private String reciprocalLicense = null;
+	private String majorLicense = null;
 
 	private Component mParent = null;
-	private UEReportProperty mUEProp = new UEReportProperty();
 	
 	public JPanReportProperty() {
 		super();
@@ -80,9 +83,13 @@ public class JPanReportProperty extends JPanel {
 	}
 
 	private void initValues() {
-		this.getJTextFieldDefaultReportLocation().setText(mUEProp.getDefaultReportLocation());
-		this.getJTextFieldReciprocalLicense().setText(mUEProp.getReciprocalLicense());
-		this.getJTextFieldMajorLicense().setText(mUEProp.getMajorLicense());
+		Property prop = Property.getInstance();
+		defaultReportLocation = prop.getProperty(Property.DEFALT_REPORT_LOCATION);
+		reciprocalLicense = prop.getProperty(Property.RECIPROCAL_LICENSE);
+		majorLicense = prop.getProperty(Property.MAJOR_LICENSE);
+		this.getJTextFieldDefaultReportLocation().setText(defaultReportLocation);
+		this.getJTextFieldReciprocalLicense().setText(reciprocalLicense);
+		this.getJTextFieldMajorLicense().setText(majorLicense);
 	}
 	
 	public void setParent(Component pParent) {
@@ -434,16 +441,11 @@ public class JPanReportProperty extends JPanel {
 				case TF_MAJOR:
 				case TF_RECIPROCAL:
 					
-					if(jTextFieldDefaultReportLocation != null &&
-					   jTextFieldDefaultReportLocation.getText().equals(mUEProp.getDefaultReportLocation()) == false ) {
+					if(!getJTextFieldDefaultReportLocation().getText().equals(defaultReportLocation)) {
 						jButtonOK.setEnabled(true);
-					} else if (jTextFieldReciprocalLicense != null &&
-							jTextFieldReciprocalLicense.getText().equals(mUEProp.getReciprocalLicense())==false
-							) {
+					} else if (!getJTextFieldReciprocalLicense().getText().equals(reciprocalLicense)) {
 						jButtonOK.setEnabled(true);
-					} else if (jTextFieldMajorLicense != null &&
-							jTextFieldMajorLicense.getText().equals(mUEProp.getMajorLicense())==false
-							) {
+					} else if (!getJTextFieldMajorLicense().getText().equals(majorLicense)) {
 						jButtonOK.setEnabled(true);
 					} else {
 						jButtonOK.setEnabled(false);
@@ -456,14 +458,15 @@ public class JPanReportProperty extends JPanel {
 					break;
 					
 				case BT_SAVE:
+					defaultReportLocation = getJTextFieldDefaultReportLocation().getText().trim();
+					reciprocalLicense = getJTextFieldReciprocalLicense().getText().trim();
+					majorLicense = getJTextFieldMajorLicense().getText().trim();
+					Property.getInstance().setProperty(Property.DEFALT_REPORT_LOCATION, defaultReportLocation);
+					Property.getInstance().setProperty(Property.RECIPROCAL_LICENSE, reciprocalLicense);
+					Property.getInstance().setProperty(Property.MAJOR_LICENSE, majorLicense);
 					
-					UEReportProperty ue = new UEReportProperty();
+					log.debug("save report setting");
 					
-					ue.setDefaultReportLocation(jTextFieldDefaultReportLocation.getText());
-					log.debug("save");
-					
-					mUEProp = ue;
-					UserRequestHandler.getInstance().handle(UserRequestHandler.SAVE_REPORT_SETTING, mUEProp);
 					jButtonOK.setEnabled(false);
 					mParent.setVisible(false);
 					break;

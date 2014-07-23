@@ -469,7 +469,7 @@ public class JPanCodeMatchMain extends JPanel {
 			jLabelPosition.setPreferredSize(new Dimension(15, 15));
 			jLabelPosition.setLocation(new Point(35, curPosY));
 			jLabelPosition.setSize(new Dimension(15, 15));
-			jLabelPosition.setText("¢¸");
+			jLabelPosition.setText("ï¿½ï¿½");
 			getJPanMatchedSourceViewLeft().getJPanelNavigator().add(jLabelPosition, null);
 		}
 	}
@@ -1163,14 +1163,8 @@ public class JPanCodeMatchMain extends JPanel {
 	
 				URL url = new URL(fileLocation);
 				URLConnection conn = null;
+				conn = (HttpURLConnection) url.openConnection();
 				
-				Proxy proxy = ProxyUtil.getInstance().getProxy();
-				if(proxy == null)
-		        	conn = (HttpURLConnection) url.openConnection();
-		        else
-		        	conn = (HttpURLConnection) url.openConnection(proxy);
-				
-	        
 				inputStream = conn.getInputStream();
 				BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 				int curLine = 1;

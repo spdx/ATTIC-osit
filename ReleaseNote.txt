@@ -38,6 +38,9 @@ ReleaseNote.txt - Release Note
 3. What's New
 --------------
 
+### OSI v0.8.3 20140721 (Protex SDK 6.3) ###
+Improvement proxy setting (with login)
+
 ### OSI v0.8.2 20140719 (Protex SDK 6.3) ###
 Patch AIRS v0.8 (http://git.spdx.org/airs.git/)
 

@@ -47,7 +47,7 @@ public class JFrmLogin extends JFrame {
 		JPanLogin loginPanel = getJPanLogin();
 		cp.add(loginPanel);
 		
-		this.setSize(507, 220);
+		this.setSize(520, 190);
 		this.setTitle(TITLE);
 		this.setIconImage(new ImageIcon(WindowUtil.class.getResource("icon.png")).getImage());
 		this.setResizable(false);
